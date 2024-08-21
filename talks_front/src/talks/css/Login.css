@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+
+#root{
+    width: 100% !important; 
+}
+
+html,body {
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg_light_purple{
+    background-color: #5d17eb !important;  
+    width: 100%;
+    height: 100vh; /* 確保填滿全屏 */
+}
+
+
+.bg-y{
+    background-color: #ffdf5e !important;
+}
+
+
+.no_border{
+    border: none !important;
+}
+
+.mini_border{
+    border-radius: 3px !important;
+}
+
+.border_w{
+    border-width: 7px;
+}
+
+.color-y{
+    color: #ffdf5e !important; 
+}
+
+.top_b{
+    border-top:9px solid #ffdf5e;
+}
+
+.color-p{
+    color:#5d17eb !important;  
+}
+
+.bg_grey{
+    background-color: #ececec !important; 
+}
+
+.bg_white{
+    background-color: #ffffff !important;
+}
+
+.t_white{
+    color: #ffffff !important;
+}
+
+.t_size{
+    font-size: 32px !important;
+}
+
+.button_w{
+    width: 100%;
+}
+
+.special_padding{
+    padding: 48px 39px 48px 39px;
+}
+
+.container_padding{
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

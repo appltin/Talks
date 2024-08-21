@@ -1,0 +1,33 @@
+.r_container_padding{
+    padding-left: 250px !important;
+    padding-right: 250px !important;
+}
+
+.register_font{
+    font-size: 27px !important;
+}
+
+.btn-avatar {
+    width: 100px; /* 調整按鈕寬度 */
+    height: 100px; /* 調整按鈕高度，確保按鈕是正方形 */
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.avatar-img {
+    width: 100%;
+    object-fit: cover; /* 確保圖片填滿按鈕，保持比例 */
+}
+
+.avatar-bg{
+    background-color: #ececec !important;
+}
+
+.avatar_border{
+    border-radius: 3px !important;
+}
+
+label.form-label {
+    white-space: normal !important;
+}

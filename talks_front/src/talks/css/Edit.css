@@ -1,0 +1,77 @@
+.edit_container{
+    padding: 60px 0px 60px 0px !important;
+}
+
+.edit_title{
+    font-size: 30px !important;
+    color: rgb(190, 190, 190);
+}
+
+.edit_title:hover{
+    color: #5d17eb;;
+}
+
+.edit_button{
+    color: black;
+    background-color: rgb(231, 231, 231);
+}
+
+.draft_color{
+    color: rgb(179, 179, 179);
+}
+
+.edit_content{
+    color: #47494c;
+    direction: ltr; /* 確保文字方向是從左到右 */
+}
+
+.edit_content img {
+    display: block;
+    max-width: 90%; /* 防止圖片超出編輯區域的寬度 */
+    margin: 10px auto; /* 自動調整左右邊距使圖片置中 */
+    height: auto;    /* 保持圖片比例 */
+    resize: both;    /* 允許調整大小 */
+    overflow: auto;  /* 在圖片大小超出時顯示滾動條 */
+}
+
+.edit_i{
+    font-size: 35px !important;
+    color: rgb(99, 99, 99);
+}
+
+.edit_save{
+    background-color: #5d17eb;
+    border-radius: 10px;
+}
+
+.edit_save:hover{
+    background-color: rgb(57, 18, 136); 
+}
+
+.edit_cancel{
+    background-color: transparent;
+    color: #525458;
+}
+
+.edit_cancel:hover{
+    background-color: transparent;
+    color: #828282;
+}
+
+.dashed_border {
+    border: 2px dashed #929292; /* 2px 寬的黑色虛線邊框 */
+    color: #929292;
+    height: 350px;
+}
+
+#uploadImg:hover{
+    color: #b5b5b5;;
+    border-color: #b5b5b5;;
+}
+
+.up_Area{
+    margin-top: 100px;
+    margin-bottom: 120px;
+}
+
+
