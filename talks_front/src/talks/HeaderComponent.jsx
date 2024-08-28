@@ -2,6 +2,7 @@ import { bottom } from '@popperjs/core'
 import './css/Common.css'
 import './css/Header.css'
 import {Link} from 'react-router-dom'
+import { Dropdown } from 'react-bootstrap';
 
 export default function HeaderComponent(){
     return(
@@ -40,14 +41,15 @@ export default function HeaderComponent(){
                                 </Link>
                             </li>
 
-                            <div className="dropdown mt-2">
-                                <button className="btn drop_bg dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                </button>
-                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenu2">
-                                    <li><button className="dropdown-item" type="button">community rules</button></li>
-                                    <li><button className="dropdown-item" type="button">log out</button></li>
-                                </ul>
-                            </div>
+                            <Dropdown className="mt-2">
+                                <Dropdown.Toggle className="btn drop_bg" id="dropdownMenu2">
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu className="dropdown-menu-end">
+                                    <Dropdown.Item>community rules</Dropdown.Item>
+                                    <Dropdown.Item>log out</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </ul>
                     </div>
             </div>

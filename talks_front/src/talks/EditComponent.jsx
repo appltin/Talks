@@ -131,6 +131,7 @@ export default function EditCompotent() {
             //檢查是否已選擇看板
             if(border !== 'Select posting board' && title.trim() !== ''){
                 // 將文章保存到數據庫
+                console.log(article)
                 const result = await addArticle(article)
                 alert('Post successful!')
                 navigate('/mainPage')

@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'; //bootstrap icon表
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGratipay } from '@fortawesome/free-brands-svg-icons';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -16,7 +16,7 @@ function Login() {
         event.preventDefault(); // 阻止表單提交的默認行為
 
         if (await authContext.login(username, password)) {
-            navigate(`/edit`);
+            navigate(`/mainPage`);
         } else {
             console.log('failure login');
             setShowErrorMessage(true);

@@ -68,3 +68,54 @@ export async function addArticle(article){
         throw error;
     }
 }
+
+// 加入收藏
+export async function addFavoriteBoard(userId, boardId){
+    try{
+        const response = await axios.post('http://localhost:8080/user/addFavoriteBoard', { 
+            userId : userId,  
+            boardId : boardId
+        })
+        return response.data
+    }catch(error){
+        console.log('Failed to addToFavorites:', error)
+        throw error;
+    }
+};
+
+// 取消收藏
+export async function removeFavoriteBoard(userId, boardId){
+    try{
+        const response = await axios.delete(`http://localhost:8080/user/removeFavoriteBoard`, {
+            params: {
+                userId: userId,
+                boardId: boardId
+            }
+        })
+        
+        return response.data
+    }catch(error){
+        console.log('Failed to removeFromFavorites:', error)
+        throw error
+    }
+};
+
+export async function getPopularArticle(){
+    try{
+        const response = await axios.get('http://localhost:8080/article/popular')
+        return response.data
+    }catch(error){
+        console.log('Failed to getPopularArticle:', error)
+        throw error
+    }
+}
+
+export async function getLatestArticle(){
+    try{
+        const response = await axios.get('http://localhost:8080/article/latest')
+        return response.data
+    }catch(error){
+        console.log('Failed to getPopularArticle:', error)
+        throw error
+    }
+}

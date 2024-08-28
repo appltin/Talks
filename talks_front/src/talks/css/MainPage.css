@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap');
+
+.mainPage_container{
+    background-color: rgb(68, 22, 159) !important;
+    height: 100vh;
+    padding: 2% 6% 0% 2%;
+}
+
+.white_area{
+    height: 100%;
+    border-radius: 5px;
+}
+
+.sidebar{
+    position: sticky;
+    top: 50px; /* 固定在導覽行下方 */
+    height: 100%; /* 減去導覽行的高度 */
+}
+
+.sidebar_button{
+    background-color: rgb(68, 22, 159);
+}
+
+.mainPage_img{
+    width: 14%;
+}
+
+.mainPage_ArticleImg{
+    width: 115px; 
+    height: 115px;
+    border-radius: 5%;
+    object-fit: cover; /* 保持圖片比例 */
+}
+
+.mainPage_listButton{
+    background-color: transparent !important;
+    border: none;
+}
+
+.recommended_text {
+    color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.mainPage_row{
+    padding-left: 4%;
+    padding-right: 5%;
+}
+
+.try{
+    color: rgb(132, 78, 240);
+    color: rgb(41, 13, 97);
+}
+
+.mainPage_dropArea{
+    color: black !important;
+    background-color: rgb(232, 232, 232) !important;
+}
+
+.mainPage_gray{
+    color: rgb(149, 149, 149) !important;
+}
+
+.mainPage_deepGray{
+    color: rgb(39, 39, 39) !important;
+}
+
+.mainPage_notoFont{
+    font-family: "Noto Sans TC", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+
+.try{
+    background-color: #fa3b2ae5;
+}
+
+.mainPage_Blue{
+    color: rgb(79, 148, 252);
+    font-size: 25px;
+}
+
+.mainPage_spaceTab{
+    margin-left: 10px; 
+    margin-right: 10px;
+}
+
+.no-scrollbar {
+    scrollbar-width: none; /* 適用於 Firefox 隱藏滾動條 */
+    -ms-overflow-style: none; /* 適用於 Internet Explorer 和 Edge 隱藏滾動條 */
+  }
+  
+.no-scrollbar::-webkit-scrollbar {
+display: none; /* 適用於 Chrome、Safari 和 Opera 隱藏滾動條 */
+}
+

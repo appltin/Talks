@@ -34,6 +34,7 @@ export default function TalksAppComponent() {
                         
                         <Route path='/mainPage' element={
                             <AuthenticatedRoute>
+                                <HeaderComponent/>
                                 <MainPageComponent/>
                             </AuthenticatedRoute> 
                         } />
