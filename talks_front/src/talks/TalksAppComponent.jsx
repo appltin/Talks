@@ -8,6 +8,7 @@ import RegisterComponent from './RegisterCompetent.jsx'
 import EditCompotent from './EditComponent.jsx'
 import HeaderComponent from './HeaderComponent.jsx'
 import Try from './Try.jsx'
+import PageCompotent from './PageComponent.jsx';
 
 function AuthenticatedRoute({children}) {
     const authContext = useAuth()
@@ -44,6 +45,15 @@ export default function TalksAppComponent() {
                                 <div>
                                     <HeaderComponent/>
                                     <EditCompotent/>
+                                </div>
+                            </AuthenticatedRoute>
+                        } />
+
+                        <Route path='/page/:boardName' element={
+                            <AuthenticatedRoute>
+                                <div>
+                                    <HeaderComponent/>
+                                    <PageCompotent/>
                                 </div>
                             </AuthenticatedRoute>
                         } />
