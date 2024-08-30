@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { formApiClient } from "../api/formApiClient";
 import axios from 'axios'
-import { getAvatarAndUerId } from '../api/TalksApiService'
+import { getAvatarAndUerId, getFavoriteBoardId } from '../api/TalksApiService'
 
 //1: Create a Context
 export const AuthContext = createContext()
@@ -41,10 +41,12 @@ export default function AuthProvider({ children }) {
             if (response.status === 200) {
                 setAuthInterceptor(username, password);
                 setAuthenticated(true);
-                //取得用戶頭像和id
+
+                // 取得用戶頭像和id
                 const user = await getAvatarAndUerId(username);
                 setUsername(username);
                 setUserId(user.userId)
+
                 return true;
                 
             } else {

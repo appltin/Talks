@@ -1,5 +1,6 @@
 import axios from "axios";
 import { jsonApiClient } from "./jsonApiClient";
+import { parsePath } from "react-router-dom";
 
 export const register = async (user) => {
     try {
@@ -117,5 +118,37 @@ export async function getLatestArticle(){
     }catch(error){
         console.log('Failed to getPopularArticle:', error)
         throw error
+    }
+}
+
+export async function getFavoriteBoardId(userId){
+    try{
+        const response = await axios.get('http://localhost:8080/user/getFavoriteBoardId', {
+          params : {
+            userId : userId
+        }})
+        
+        return response.data
+    }catch(error){
+        console.log('Failed to getFavoriteBoardId:', error)
+        throw error
+    }
+}
+
+export async function getFavBoardArticles(boardIds) {
+    try {
+        const response = await axios.get('http://localhost:8080/article/getFavBoardArticles', {
+            params: { 
+                boardIds: boardIds
+            },
+            paramsSerializer: params => {
+                return `boardIds=${params.boardIds.join(',')}`;
+            }
+        });
+        
+        return response.data;
+    } catch (error) {
+        console.error('Failed to getFavBoardArticles:', error);
+        throw error;
     }
 }
