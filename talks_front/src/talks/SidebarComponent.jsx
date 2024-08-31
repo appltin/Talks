@@ -3,6 +3,7 @@ import { FaStar } from 'react-icons/fa'; // 使用 react-icons 作為星星圖�
 import { addFavoriteBoard, removeFavoriteBoard, getFavoriteBoardId} from './api/TalksApiService';
 import { useAuth } from './security/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import './css/Sidebar.css'
 
 export default function Sidebar( {fetchFavBoardArticles} ) {
 
@@ -63,10 +64,14 @@ export default function Sidebar( {fetchFavBoardArticles} ) {
                 await removeFavoriteBoard(userId, boardId); // 呼叫取消收藏的 API 方法，並等待完成
                 alert(`已從追蹤名單移除`);
             }
-            await fetchFavBoardArticles() // 刷新追蹤看板的文章 
+
+            if(fetchFavBoardArticles){
+                await fetchFavBoardArticles() // 更新追蹤看板的文章
+            }
             
         } catch (error) {
             console.error('操作失敗:', error);
+
             // 如果操作失敗，恢復到之前的狀態
             setStarredItems(prevState => ({
                 ...prevState,
@@ -89,21 +94,22 @@ export default function Sidebar( {fetchFavBoardArticles} ) {
 
             {sidebarList.map((img) => (
                 <button
-                    className='d-flex w-100 sidebar_button border-0 p-2 align-items-center'
-                    key = {img.barName}
-                    onClick = { () => navigate(`/page/${img.barName}`) }
+                className='row sidebar_button border-0 p-2 align-items-center'
+                key = {img.barName}
                 >
-                    <img src={img.src} alt={img.barName} className='mainPage_img rounded-circle me-3' />
-                    <p className='text-white fw-bold fs-5 m-0'>{img.barName}</p>
+                    <div className='col-10 d-flex'   onClick = { () => navigate(`/page/${img.barName}`) }>
+                        <img src={img.src} alt={img.barName} className='mainPage_img rounded-circle me-3' />
+                        <p className='text-white fw-bold fs-5 m-0'>{img.barName}</p>
+                    </div>
                     <FaStar
-                        className = "ms-auto" // 只放入需要的 Bootstrap 類別
+                        className = "col-2" 
                         style={{
                             cursor: 'pointer',
-                            color: starredItems[img.boardId] ? 'rgb(132, 78, 240)' : 'rgb(41, 13, 97)' // 直接使用內聯樣式設置顏色
-                        }}
-                        onClick = {() => handleStarClick(img.boardId)}
+                            color: starredItems[img.boardId] ? 'rgb(132, 78, 240)' : 'rgb(41, 13, 97)'
+                        }} 
+                        onClick={() => handleStarClick(img.boardId)}
                     />
-                </button>
+                </button> 
             ))}
         </div>
     );

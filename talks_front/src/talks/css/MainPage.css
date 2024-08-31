@@ -11,18 +11,9 @@
     border-radius: 5px;
 }
 
-.sidebar{
-    position: sticky;
-    top: 50px; /* 固定在導覽行下方 */
-    height: 100%; /* 減去導覽行的高度 */
-}
-
-.sidebar_button{
-    background-color: rgb(68, 22, 159);
-}
-
 .mainPage_img{
-    width: 14%;
+    width: 15%;
+    height: 15%;
 }
 
 .mainPage_ArticleImg{
@@ -92,5 +83,9 @@
   
 .no-scrollbar::-webkit-scrollbar {
 display: none; /* 適用於 Chrome、Safari 和 Opera 隱藏滾動條 */
+}
+
+.mainPage_iconSize{
+    font-size: 25px;
 }
 

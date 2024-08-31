@@ -9,6 +9,7 @@ import EditCompotent from './EditComponent.jsx'
 import HeaderComponent from './HeaderComponent.jsx'
 import Try from './Try.jsx'
 import PageCompotent from './PageComponent.jsx';
+import ReadArticleComponent from './ReadArticleComponent.jsx';
 
 function AuthenticatedRoute({children}) {
     const authContext = useAuth()
@@ -31,6 +32,10 @@ export default function TalksAppComponent() {
 
                         <Route path='/try' element={
                             <Try/>
+                        } />
+
+                        <Route path='/readArticle' element={
+                            <ReadArticleComponent/>
                         } />
                         
                         <Route path='/mainPage' element={

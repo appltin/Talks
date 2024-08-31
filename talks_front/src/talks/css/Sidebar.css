@@ -1,0 +1,16 @@
+.sideBar_star{
+    width: 10px !important;
+    font-size: 70px !important;
+}
+
+.sidebar{
+    position: sticky;
+    top: 50px; /* 固定在導覽行下方 */
+    height: 100%; /* 減去導覽行的高度 */
+}
+
+.sidebar_button{
+    background-color: rgb(68, 22, 159) !important;
+}
+
+

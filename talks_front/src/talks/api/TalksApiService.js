@@ -152,3 +152,76 @@ export async function getFavBoardArticles(boardIds) {
         throw error;
     }
 }
+
+// 獲取指定版的文章
+export async function getSpecifyBoardArticle(boardName) {
+    try {
+        const response = await axios.get(`http://localhost:8080/article/getSpecifyBoard/${boardName}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to getSpecifyBoardArticles:', error);
+        throw error;
+    }
+}
+
+// ------ 未測試
+
+// 獲取指定文章
+export async function getArticleById(articleId) {
+    try {
+        const response = await axios.get(`http://localhost:8080/getArticleById/${articleId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to getArticleById:', error);
+        throw error;
+    }
+}
+
+// 增加文章的 love
+export async function incrementArticleLove(articleId) {
+    try {
+        const response = await axios.post(`http://localhost:8080/incrementLove/${articleId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to incrementArticleLove:', error);
+        throw error;
+    }
+}
+
+// 新增留言
+export async function addMessage(articleId, userId, username, content) {
+    try {
+        const response = await axios.post('http://localhost:8080/addMessage', {
+            articleId: articleId,
+            userId: userId,
+            username: username,
+            content: content
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to addMessage:', error);
+        throw error;
+    }
+}
+
+// 新增愛心
+export async function incrementMessageLove(messageId) {
+    try {
+        const response = await axios.post(`http://localhost:8080/incrementMessageLove/${messageId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to incrementMessageLove:', error);
+        throw error;
+    }
+}
+
+// 根據文章 ID 獲取留言
+export async function getMessagesByArticleId(articleId) {
+    try {
+        const response = await axios.get(`http://localhost:8080/getMessagesByArticleId/${articleId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to getMessagesByArticleId:', error);
+        throw error;
+    }
+}

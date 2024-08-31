@@ -8,8 +8,7 @@ import {Link} from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGratipay } from '@fortawesome/free-brands-svg-icons';
 import Sidebar from './SidebarComponent';
-import adImage from '../images/ads.png';
-import adImage2 from '../images/ads2.jpg';
+import AdvertiseComponent from './AdvertiseComponent'
 
 export default function MainPageCompetent() {
 
@@ -35,8 +34,7 @@ export default function MainPageCompetent() {
                 setArticles(data)
     
             }catch(error){
-                console.error('fail to filter article')
-                throw error
+                console.error('fail to filter article', error)
             }
         }
         fetchArticles();
@@ -112,7 +110,7 @@ export default function MainPageCompetent() {
                                                         <span>{ article.username }</span>
                                                         <span className='mainPage_spaceTab'> · </span>
 
-                                                        <span>{new Date( article.time ).toISOString().slice(0, 10)}</span>
+                                                        <span>{new Date(article.time).toLocaleDateString()}</span>
                                                     </div>
 
                                                     <div className='mt-3 mb-3 fw-bold h2 mainPage_deepGray fs-3'>{article.title}</div>
@@ -124,20 +122,20 @@ export default function MainPageCompetent() {
                                                     </h5>
 
                                                     <div className="d-flex align-items-center">
-                                                        <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" style={{ fontSize: '25px' }} />
+                                                        <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" className='mainPage_iconSize'/>
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.love}</h5>
-                                                        <i className="ms-4 bi bi-chat-heart-fill mainPage_Blue" style={{ fontSize: '25px' }}></i>
+                                                        <i className="ms-4 bi bi-chat-heart-fill mainPage_Blue mainPage_iconSize"></i>
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>10</h5>
                                                     </div>
                                                 </div>
 
-                                                { article.firstImgUrl.trim() !== '' && 
-                                                <div className='d-flex align-items-start ms-auto pb-3 pt-5' style={{ height: 'auto' }}>
-                                                    <img src={article.firstImgUrl}
-                                                        alt={article.firstImgUrl}
-                                                        className='mainPage_ArticleImg'
-                                                    />
-                                                </div>}
+                                                { article.firstImgUrl.trim() && 
+                                                    <div className='d-flex align-items-start ms-auto pb-3 pt-5' style={{ height: 'auto' }}>
+                                                        <img src={article.firstImgUrl}
+                                                            alt={article.firstImgUrl}
+                                                            className='mainPage_ArticleImg'
+                                                        />
+                                                    </div>}
                                             </div>
                                         ))}
                                         
@@ -172,9 +170,9 @@ export default function MainPageCompetent() {
                                                     </h5>
 
                                                     <div className="d-flex align-items-center">
-                                                        <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" style={{ fontSize: '25px' }} />
+                                                        <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" className='mainPage_iconSize' />
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.love}</h5>
-                                                        <i className="ms-4 bi bi-chat-heart-fill mainPage_Blue" style={{ fontSize: '25px' }}></i>
+                                                        <i className="ms-4 bi bi-chat-heart-fill  mainPage_Blue  mainPage_iconSize"></i>
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>10</h5>
                                                     </div>
                                                 </div>
@@ -194,8 +192,7 @@ export default function MainPageCompetent() {
 
                     {/* 廣告區 */}
                     <div className='col-2 ps-4'> 
-                        <img src={adImage} alt="廣告圖" className='w-100'/>
-                        <img src={adImage2} alt="廣告圖" className='w-100 mt-5'/>
+                        <AdvertiseComponent/>
                     </div>
 
                 </div>

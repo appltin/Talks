@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa'; // 使用 react-icons 作為星星圖示
 import { useAuth } from './security/AuthContext';
 import {useParams, useNavigate} from 'react-router-dom'
-import { getSignedUrl, getPopularArticle, getLatestArticle, getFavBoardArticles, getFavoriteBoardId} from './api/TalksApiService';
+import { getSpecifyBoardArticle, getPopularArticle, getLatestArticle, getFavBoardArticles, getFavoriteBoardId} from './api/TalksApiService';
 import './css/MainPage.css'
 import { Dropdown } from 'react-bootstrap';
 import {Link} from 'react-router-dom'
@@ -11,6 +11,7 @@ import { faGratipay } from '@fortawesome/free-brands-svg-icons';
 import Sidebar from './SidebarComponent';
 import adImage from '../images/ads.png';
 import adImage2 from '../images/ads2.jpg';
+import AdvertiseComponent from './AdvertiseComponent'
 
 
 export default function PageCompotent() {
@@ -18,18 +19,17 @@ export default function PageCompotent() {
 
     const authContext = useAuth();
     const userId = authContext.userId
-    const [attractArticle, setAttractArticle] = useState([])
+    const [specifyBoardArticle, setSpecifyBoardArticle] = useState([])
 
     useEffect(() => {
-        fetchFavBoardArticles()
-    }, [])
+        SpecifyBoardArticle()
+    }, [boardName])
 
-    //取得追蹤看板的文章
-    const fetchFavBoardArticles = async() => {
+    //獲取文章
+    const SpecifyBoardArticle = async() => {
         try{
-            const favoriteBoardId = await getFavoriteBoardId(userId) 
-            let data = await getFavBoardArticles(favoriteBoardId)
-            setAttractArticle(data)
+            let data = await getSpecifyBoardArticle(boardName)
+            setSpecifyBoardArticle(data)
         }catch(error){
             console.error('fail to fetch favBoardArticles')
             throw error
@@ -43,7 +43,7 @@ export default function PageCompotent() {
 
                     {/* 看板區 */}
                     <div className='col-3 pe-4'>
-                        <Sidebar fetchFavBoardArticles={fetchFavBoardArticles}/>
+                        <Sidebar uploadArticle={SpecifyBoardArticle}/>
                     </div>
 
                     {/* 文章展示區 */}
@@ -53,8 +53,11 @@ export default function PageCompotent() {
                             {/* 選項二 追蹤的看板 */}
                             <div className="">
                                 {/* 單篇文章 */}
-                                {attractArticle.map((article) => (
-                                    <div key={article.articleId} className='d-flex border-bottom' style={{ height: 'auto' }}>
+                                {specifyBoardArticle.map((article) => (
+                                    <div key={article.articleId} 
+                                        className='d-flex border-bottom' 
+                                        style={{ height: 'auto' 
+                                    }}>
                                         <div className='py-3'>
 
                                             <div className='mb-2 mainPage_gray h5'>
@@ -98,8 +101,7 @@ export default function PageCompotent() {
 
                     {/* 廣告區 */}
                     <div className='col-2 ps-4'> 
-                        <img src={adImage} alt="廣告圖" className='w-100'/>
-                        <img src={adImage2} alt="廣告圖" className='w-100 mt-5'/>
+                        <AdvertiseComponent/>
                     </div>
 
                 </div>
