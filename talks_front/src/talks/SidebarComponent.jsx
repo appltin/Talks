@@ -5,20 +5,16 @@ import { useAuth } from './security/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './css/Sidebar.css'
 
-export default function Sidebar( {fetchFavBoardArticles, setSidebarData} ) {
+export default function Sidebar( {fetchFavBoardArticles } ) {
 
     const authContext = useAuth();
     const userId = authContext.userId
     const navigate = useNavigate();
+    const starredItems = authContext.starredItems
+    const setStarredItems = authContext.setStarredItems
 
     const [sidebarList, setSidebarList] = useState([])
-    const [starredItems, setStarredItems] = useState({}); // 狀態管理每個按鈕的點亮狀態
 
-    //通知allBoard頁面刷新
-    useEffect(() => {
-        console.log(setSidebarData); 
-        setSidebarData(JSON.parse(JSON.stringify(starredItems)));  
-    }, [starredItems]);
     
     useEffect(() => {
         try{

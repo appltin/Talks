@@ -20,6 +20,7 @@ export default function AuthProvider({ children }) {
     const [username, setUsername] = useState(null)
     const [userId, setUserId] = useState(null)
     const [avatar, setAvatar] = useState(null)
+    const [starredItems, setStarredItems] = useState({}); 
 
     // 設置 Axios 攔截器
     function setAuthInterceptor(username, password) {
@@ -70,7 +71,7 @@ export default function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId, avatar}  }>
+        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId, avatar, starredItems, setStarredItems}  }>
             {children}
         </AuthContext.Provider>
     )
