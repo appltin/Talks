@@ -1,25 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa'; // 使用 react-icons 作為星星圖示
-import { addFavoriteBoard, removeFavoriteBoard, getFavoriteBoardId} from './api/TalksApiService';
+import { addFavoriteBoard, removeFavoriteBoard, getFavoriteBoardId, getRecommendBoardsInformation} from './api/TalksApiService';
 import { useAuth } from './security/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './css/Sidebar.css'
 
-export default function Sidebar( {fetchFavBoardArticles} ) {
+export default function Sidebar( {fetchFavBoardArticles, setSidebarData} ) {
 
     const authContext = useAuth();
     const userId = authContext.userId
     const navigate = useNavigate();
 
-    const sidebarList = [
-        { boardId : 1, barName:"tech", src:"https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/scifi-4916165_640.jpg.png" },
-        { boardId : 2, barName:'mackup', src:'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/makeup-739672_640.jpg.png' },
-        { boardId : 3, barName:"novel", src:"https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/book-3773783_640.jpg.png" },
-        { boardId : 4, barName:"pet", src:"https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/cat-8612685_640.jpg.png" },
-        { boardId : 5, barName:"engineer", src:"https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/coding-1853305_640.jpg.png" },
-    ];
-
+    const [sidebarList, setSidebarList] = useState([])
     const [starredItems, setStarredItems] = useState({}); // 狀態管理每個按鈕的點亮狀態
+
+    //通知allBoard頁面刷新
+    useEffect(() => {
+        console.log(setSidebarData); 
+        setSidebarData(JSON.parse(JSON.stringify(starredItems)));  
+    }, [starredItems]);
+    
+    useEffect(() => {
+        try{
+            //取得看板的名稱和圖片
+            const setBoardInformation = async () => {
+                const boardInformation = await getRecommendBoardsInformation(); 
+                setSidebarList(boardInformation)
+            }
+            setBoardInformation()
+
+        }catch(error){
+            console.error('fail to get all board info')
+        }
+
+    }, [])
 
     useEffect(() => {
         try{
@@ -29,10 +43,13 @@ export default function Sidebar( {fetchFavBoardArticles} ) {
                 const newStarItems = {}
 
                 const favoriteBoardId = await getFavoriteBoardId(userId)  // 取得目前已追蹤看板
-                favoriteBoardId.forEach( boardId => {                     // 將有追蹤的看板設為true
-                    newStarItems[boardId] = true 
+
+                if(Array.isArray(favoriteBoardId)){
+                    favoriteBoardId.forEach(boardId => {
+                        newStarItems[boardId] = true; // 將有追蹤的看板設為 true
+                    });
                 }
-                )
+
                 setStarredItems(newStarItems) //更新狀態
             }
 
@@ -85,7 +102,7 @@ export default function Sidebar( {fetchFavBoardArticles} ) {
         <div className='sidebar fw-bold fs-5'>
             <div className='d-flex w-100 text-white p-2 align-items-center'>
                 <i className="bi bi-clipboard2-minus-fill fs-1 me-3"></i>
-                <button className='fw-bold m-0 fs-5 text-white mainPage_listButton'>All Board</button>
+                <button className='fw-bold m-0 fs-5 text-white mainPage_listButton' onClick={ () => navigate('/allBoard')}>All Board</button>
             </div>
 
             <div className='recommended_text ps-2 pt-3 pb-4'>
@@ -95,19 +112,19 @@ export default function Sidebar( {fetchFavBoardArticles} ) {
             {sidebarList.map((img) => (
                 <button
                 className='row sidebar_button border-0 p-2 align-items-center'
-                key = {img.barName}
+                key = {img.boardName}
                 >
-                    <div className='col-10 d-flex'   onClick = { () => navigate(`/page/${img.barName}`) }>
-                        <img src={img.src} alt={img.barName} className='mainPage_img rounded-circle me-3' />
-                        <p className='text-white fw-bold fs-5 m-0'>{img.barName}</p>
+                    <div className='col-10 d-flex'   onClick = { () => navigate(`/page/${img.boardName}`) }>
+                        <img src={img.imgUrl} alt={img.boardName} className='mainPage_img rounded-circle me-3' />
+                        <p className='text-white fw-bold fs-5 m-0'>{img.boardName}</p>
                     </div>
                     <FaStar
                         className = "col-2" 
                         style={{
                             cursor: 'pointer',
-                            color: starredItems[img.boardId] ? 'rgb(132, 78, 240)' : 'rgb(41, 13, 97)'
+                            color: starredItems[img.id] ? 'rgb(132, 78, 240)' : 'rgb(41, 13, 97)'
                         }} 
-                        onClick={() => handleStarClick(img.boardId)}
+                        onClick={() => handleStarClick(img.id)}
                     />
                 </button> 
             ))}

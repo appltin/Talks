@@ -1,14 +1,17 @@
 import React,{ useState, useEffect, useRef } from 'react';
-import { getSignedUrl, deleteImage , addArticle} from './api/TalksApiService';
+import { getSignedUrl, deleteImage , addArticle, getArticleById} from './api/TalksApiService';
 import './css/Edit.css'
 import { useAuth } from './security/AuthContext'
 import 'bootstrap';
 import { Popover } from 'bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
+import RuleModal from './RuleModal'
+import { Modal, Button } from 'react-bootstrap';
 
 export default function EditCompotent() {
 
+    const { articleId } = useParams() // 從 URL 中取得 articleId
     const [title, setTitle] = useState('');
     const articleEditorRef = useRef(null); // 文章頁面的 ref
     const authContext = useAuth()
@@ -17,29 +20,33 @@ export default function EditCompotent() {
     const [border, setBorder] = useState('Select posting board')
     const navigate = useNavigate();
 
+    const [showModal, setShowModal] = useState(false);
+    const handleShowModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
+
 
     useEffect(() => {
-        initializePopover();
-    }, []);
+        if (articleId !== '-1') {
+            loadArticle(articleId);
+        } else {
+            // 如果是新增文章，將編輯器初始化為空
+            setTitle('');
+            articleEditorRef.current.innerHTML = '';
+            setBorder('Select posting board');
+        }
+    }, [articleId]);
 
-    // 將Popover 初始化
-    const initializePopover = () => {
-        const popoverTriggerList = document.querySelectorAll('[id="rulesButton"]');
-        const popoverContent = `
-            <h5>1.No Violence or Hate Speech<br><br></h5>
-            <h5>2.Respect Privacy<br><br></h5>
-            <h5>3.No Pornographic or Inappropriate Content<br><br></h5>
-            <h5>4.No Fraud or Spam</h5>
-        `;
-
-        popoverTriggerList.forEach(el => {
-            new Popover(el, {
-                content: popoverContent,
-                html: true,
-                trigger: 'click',
-                placement: 'right',
-            });
-        });
+    // 載入舊文章
+    const loadArticle = async (id) => {
+        try {
+            const article = await getArticleById(id); // 調用 API 獲取文章
+            console.log(article)
+            setTitle(article.title);
+            articleEditorRef.current.innerHTML = article.content;
+            setBorder(article.board);
+        } catch (error) {
+            console.error('Failed to load article:', error);
+        }
     };
 
 
@@ -162,6 +169,7 @@ export default function EditCompotent() {
         <div className='container-fuild'>
             <div className='container edit_container'>
                 <div className='row'>
+
                     {/* 選項單 */}
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -189,10 +197,21 @@ export default function EditCompotent() {
                                 </Dropdown>
 
 
-                                <button id="rulesButton" type="button" className='draft_color bg-transparent border-0 fs-5 btn' data-bs-toggle="popover" data-bs-placement="right" title="Community Posting Rules">
+                                <button 
+                                    id="rulesButton" 
+                                    type="button" 
+                                    className='draft_color bg-transparent border-0 fs-5 btn' 
+                                    data-bs-toggle="popover" 
+                                    data-bs-placement="right" 
+                                    title="Community Posting Rules"
+                                    onClick={handleShowModal}
+                                >
                                     <i class="bi bi-info-circle-fill me-2"></i>
                                     Rules
                                 </button>
+                                {/* rule模態視窗 */}
+                                <RuleModal show={showModal} handleClose={handleCloseModal} />
+                                
                             </div>
 
                             <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" className="scrollspy-example mt-4" tabIndex="0">
@@ -271,10 +290,19 @@ export default function EditCompotent() {
                                 </Dropdown>
 
 
-                                <button id="rulesButton" type="button" className='draft_color bg-transparent border-0 fs-5 btn' data-bs-toggle="popover" data-bs-placement="right" title="Community Posting Rules">
+                                <button 
+                                    id="rulesButton" 
+                                    type="button" 
+                                    className='draft_color bg-transparent border-0 fs-5 btn' 
+                                    data-bs-toggle="popover" 
+                                    data-bs-placement="right" 
+                                    title="Community Posting Rules"
+                                    onClick={handleShowModal}
+                                >
                                     <i class="bi bi-info-circle-fill me-2"></i>
                                     Rules
                                 </button>
+                                <RuleModal show={showModal} handleClose={handleCloseModal} />
 
                             </div>
 

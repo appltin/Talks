@@ -6,8 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { jsonApiClient } from './api/jsonApiClient';
 import { register } from './api/TalksApiService';
 
-//檢查username是否唯一
-//
 
 export default function RegisterComponent() {
     const authContext = useAuth();
@@ -25,7 +23,7 @@ export default function RegisterComponent() {
         { avatarName:'pinkET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/pinkET.png' },
         { avatarName:'yellowET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/yellowET.png' },
         { avatarName:'deepPinkET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/deepPinkET.png' },
-        { avatarName:'purpleET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/purpleET.png' },
+        { avatarName:'greenET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/greenET.png' },
         { avatarName:'Takoyaki', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/Takoyaki.png'},
         { avatarName:'malai', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/malai.png'}
     ];
@@ -87,7 +85,7 @@ export default function RegisterComponent() {
                     </div>
                     <div className="col-12 d-flex py-2 justify-content-around avatar-img avatar-bg avatar_border">
                         {avatars.map((avatar) => (
-                            <button key={avatar.avatarName} type="button" className="btn btn-avatar avatar-bg avatar_border" onClick={() => setAvatar(avatar.avatarName)}>
+                            <button key={avatar.avatarName} type="button" className="btn btn-avatar avatar-bg avatar_border" onClick={() => setAvatar(avatar.src)}>
                                 <img src={avatar.src} alt={avatar.avatarName} className="avatar-img" />
                             </button>
                         ))}

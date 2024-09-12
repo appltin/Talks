@@ -44,9 +44,9 @@ export async function deleteImage(imageUrl) {
     }
 }
 
-export async function getAvatarAndUerId(username){
+export async function getUserInformation(username){
     try{
-        const response = await axios.get('http://localhost:8080/article/getAvatarAndUerId',{
+        const response = await axios.get('http://localhost:8080/article/getUerInformation',{
             params:{
                 username : username
             }
@@ -164,12 +164,11 @@ export async function getSpecifyBoardArticle(boardName) {
     }
 }
 
-// ------ 未測試
 
 // 獲取指定文章
 export async function getArticleById(articleId) {
     try {
-        const response = await axios.get(`http://localhost:8080/getArticleById/${articleId}`);
+        const response = await axios.get(`http://localhost:8080/article/getArticleById/${articleId}`);
         return response.data;
     } catch (error) {
         console.error('Failed to getArticleById:', error);
@@ -180,7 +179,18 @@ export async function getArticleById(articleId) {
 // 增加文章的 love
 export async function incrementArticleLove(articleId) {
     try {
-        const response = await axios.post(`http://localhost:8080/incrementLove/${articleId}`);
+        const response = await axios.post(`http://localhost:8080/article/incrementLove/${articleId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to incrementArticleLove:', error);
+        throw error;
+    }
+}
+
+// 減少文章的 love
+export async function decrementArticleLove(articleId) {
+    try {
+        const response = await axios.post(`http://localhost:8080/article/decrementLove/${articleId}`);
         return response.data;
     } catch (error) {
         console.error('Failed to incrementArticleLove:', error);
@@ -189,14 +199,10 @@ export async function incrementArticleLove(articleId) {
 }
 
 // 新增留言
-export async function addMessage(articleId, userId, username, content) {
+export async function addMessage(message) {
     try {
-        const response = await axios.post('http://localhost:8080/addMessage', {
-            articleId: articleId,
-            userId: userId,
-            username: username,
-            content: content
-        });
+        const response = await axios.post('http://localhost:8080/message/addMessage', message
+        );
         return response.data;
     } catch (error) {
         console.error('Failed to addMessage:', error);
@@ -204,10 +210,21 @@ export async function addMessage(articleId, userId, username, content) {
     }
 }
 
-// 新增愛心
+// 新增留言愛心
 export async function incrementMessageLove(messageId) {
     try {
-        const response = await axios.post(`http://localhost:8080/incrementMessageLove/${messageId}`);
+        const response = await axios.post(`http://localhost:8080/message/incrementMessageLove/${messageId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to incrementMessageLove:', error);
+        throw error;
+    }
+}
+
+// 新增留言愛心
+export async function decrementMessageLove(messageId) {
+    try {
+        const response = await axios.post(`http://localhost:8080/message/decrementMessageLove/${messageId}`);
         return response.data;
     } catch (error) {
         console.error('Failed to incrementMessageLove:', error);
@@ -218,10 +235,123 @@ export async function incrementMessageLove(messageId) {
 // 根據文章 ID 獲取留言
 export async function getMessagesByArticleId(articleId) {
     try {
-        const response = await axios.get(`http://localhost:8080/getMessagesByArticleId/${articleId}`);
+        const response = await axios.get(`http://localhost:8080/message/getMessagesByArticleId/${articleId}`);
         return response.data;
     } catch (error) {
         console.error('Failed to getMessagesByArticleId:', error);
         throw error;
+    }
+}
+
+//取得推薦看板資料
+export async function getRecommendBoardsInformation() {
+    try {
+        const response = await axios.get('http://localhost:8080/article/getRecommendBoards');
+        return response.data;
+    } catch (error) {
+        console.log('Failed to getRecommendBoards:', error);
+        throw error;
+    }
+}
+
+//取得所有看板資料
+export async function getAllBoardsInformation() {
+    try {
+        const response = await axios.get('http://localhost:8080/article/getAllBoards');
+        return response.data;
+    } catch (error) {
+        console.log('Failed to getRecommendBoards:', error);
+        throw error;
+    }
+}
+
+//取得頭像
+export async function getAvatar(userId) {
+    try {
+        const response = await axios.get('http://localhost:8080/article/getAvatarUrl',{
+            params: { 
+                userId: userId
+        }
+        });
+        return response.data;
+    } catch (error) {
+        console.log('Failed to getAllBoards:', error);
+        throw error;
+    }
+}
+
+//取得用戶發的文
+export async function getArticlesByUserId(userId) {
+    try {
+        const response = await axios.get('http://localhost:8080/article/getArticlesByUserId',{
+            params: { 
+                userId: userId
+        }
+        });
+        return response.data;
+    } catch (error) {
+        console.log('Failed to getAllBoards:', error);
+        throw error;
+    }
+}
+
+//刪除文章
+export async function deleteArticle(articleId) {
+    try {
+        const response = await axios.delete('http://localhost:8080/article/delete', {
+            params: {
+                articleId: articleId
+            }
+        });
+        return response.data; // 返回 API 回應的數據
+
+    } catch (error) {
+        console.error('Failed to delete image:', error);
+        throw error; // 重新拋出錯誤，方便調用方處理
+    }
+}
+
+//取得用戶追蹤看板資訊
+export async function getFavoriteBoardInfo(userId) {
+    try {
+        const response = await axios.get('http://localhost:8080/user/getFavoriteBoardInfo',{
+            params: { 
+                userId: userId
+        }
+        });
+        return response.data;
+    } catch (error) {
+        console.log('Failed to getAllBoards:', error);
+        throw error;
+    }
+}
+
+//更改密碼
+export async function changePassword(password, userId){
+    try{
+        const response = await axios.post('http://localhost:8080/user/updatePassword', { 
+            userId : userId,  
+            password : password
+        })
+        return response.data
+    }catch(error){
+        console.log('Failed to changePassword:', error)
+        throw error;
+    }
+};
+
+//刪除帳號
+export async function deleteAccount(userId) {
+    try {
+        const response = await axios.delete('http://localhost:8080/user/deleteAccount', {
+            params: {
+                userId: userId
+            }
+        });
+        return response.data; // 返回 API 回應的數據
+
+    } catch (error) {
+        console.error('Failed to delete account:', error);
+        throw error; // 重新拋出錯誤，方便調用方處理
     }
 }

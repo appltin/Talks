@@ -1,0 +1,109 @@
+.updatePage_container{
+    background-color: rgb(68, 22, 159) !important;
+    height: 100vh;
+    padding: 2% 6% 0% 2%;
+}
+
+.updatePage_row{
+    padding-left: 12%;
+    padding-right: 12%;
+}
+
+.updatePage_button{
+    background-color: rgb(68, 22, 159) !important;
+    color: aliceblue;
+    font-size: 20px;
+}
+
+.updatePage_i{
+    font-size: 50px;
+    color: #ffffff;
+}
+
+.updatePage_iLove{
+    font-size: 50px;
+    color: #ff6262;
+}
+
+.updatePage_iArticle{
+    font-size: 50px;
+    color: #5df86a;
+}
+
+.updatePage_whtieArea{
+    border-radius: 5px;
+    height: 100%;
+}
+
+.updatePage_avatar{
+    width: 75%; /* 圖片比例調小一點，避免被圓形裁切 */
+    object-fit: cover; /* 維持圖片比例，避免變形 */
+}
+
+.updatePage_avatarContainer{
+    width: 170px !important;
+    height: 170px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.2); /* 白色，透明度 0.2 */
+    display: flex;
+    justify-content: center; /* 中央對齊 */
+    align-items: center; /* 垂直置中 */
+    overflow: hidden; /* 隱藏超出範圍的部分 */
+}
+
+.updatePage_bottom{
+    margin-bottom: 40px;
+}
+
+.updatePage_noShadow{
+    text-shadow: none;
+}
+
+.updatePage_drop{
+    background-color: transparent !important; 
+    color: rgb(105, 105, 105);
+    font-size: 22px;
+}
+
+.updatePage_drop::after{
+    display: none; /* 隱藏原本的 Bootstrap 箭頭 */
+}
+
+.updatePage_title{
+    font-size: 30px;
+    color:black;
+    text-shadow: none;
+}
+
+.updatePage_imgContainer{
+    width: 300px;
+    height: 300px;
+    color: black;
+    font-size: 20px;
+}
+
+.updatePage_Bell{
+    font-size: 30px;
+    color: #686868;
+}
+
+.updatePage_img{
+    width: 50px;
+    height: 50px;
+}
+
+.updatePage_greyButton{
+    background-color: #6119F3;
+    color: white;
+    font-size: 22px;
+    width: 100px;
+}
+
+.updatePage_settingButton{
+    width: 90px;
+}
+
+
+
+
+

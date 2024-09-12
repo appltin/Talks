@@ -55,6 +55,10 @@
     color: rgb(39, 39, 39) !important;
 }
 
+.mainPage_loveText{
+    color: rgb(105, 105, 105);
+}
+
 .mainPage_notoFont{
     font-family: "Noto Sans TC", sans-serif;
     font-optical-sizing: auto;
@@ -63,7 +67,7 @@
 }
 
 .try{
-    background-color: #fa3b2ae5;
+    background-color: #c5c5c5e5;
 }
 
 .mainPage_Blue{
@@ -88,4 +92,67 @@ display: none; /* 適用於 Chrome、Safari 和 Opera 隱藏滾動條 */
 .mainPage_iconSize{
     font-size: 25px;
 }
+
+/* 模態視窗的圖片 */
+.modal-body img {
+    max-width: 100%;  
+    height: auto;
+}
+
+.mainPage_avatarImg{
+    padding-top: 9px;
+    width: 128% !important;
+    height: 128% !important;
+    border-radius: 50%; /* 確保圖片也是圓形的 */
+    object-fit: cover; /* 維持圖片比例，避免變形 */
+}
+
+.avatar_container {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background-color: #e9e9e9; 
+    /* 淺灰色背景 #D3D3D3   黃#ffe6a0*/
+    display: flex;
+    align-items: flex-start;
+    justify-content: center; /* 中央對齊 */
+    overflow: hidden; /* 隱藏超出範圍的部分 */
+    flex-shrink: 0; /* 防止被縮小 */
+    flex-grow: 0;   /* 防止被放大 */
+}
+
+.btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+.heart-icon {
+    font-size: 25px; /* 確保圖標大小一致 */
+    transition: color 0.3s ease, background-color 0.3s ease; /* 只變化顏色和背景顏色 */
+    box-sizing: border-box; /* 確保 padding 不影響圖標尺寸 */
+}
+
+.not-liked .heart-icon {
+    color: rgb(143, 143, 143); /* 愛心顏色為灰色 */
+    padding: 4px; /* 背景內邊距 */
+}
+
+.liked .heart-icon {
+    color: #fc4f40e5; /* 愛心顏色為紅色 */
+    background-color: transparent; /* 點擊後愛心背景顏色透明 */
+    padding: 4px; /* 確保 padding 在點擊時也一致 */
+}
+
+.mainPage_messageInput{
+    height: 25px !important; 
+}
+
+
+
+
+
 

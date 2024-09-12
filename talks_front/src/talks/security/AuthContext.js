@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { formApiClient } from "../api/formApiClient";
 import axios from 'axios'
-import { getAvatarAndUerId, getFavoriteBoardId } from '../api/TalksApiService'
+import { getAvatarAndUerId, getUserInformation } from '../api/TalksApiService'
 
 //1: Create a Context
 export const AuthContext = createContext()
@@ -19,6 +19,7 @@ export default function AuthProvider({ children }) {
     const [isAuthenticated, setAuthenticated] = useState(false)
     const [username, setUsername] = useState(null)
     const [userId, setUserId] = useState(null)
+    const [avatar, setAvatar] = useState(null)
 
     // 設置 Axios 攔截器
     function setAuthInterceptor(username, password) {
@@ -43,9 +44,10 @@ export default function AuthProvider({ children }) {
                 setAuthenticated(true);
 
                 // 取得用戶頭像和id
-                const user = await getAvatarAndUerId(username);
+                const user = await getUserInformation(username);
                 setUsername(username);
                 setUserId(user.userId)
+                setAvatar(user.avatar)
 
                 return true;
                 
@@ -68,7 +70,7 @@ export default function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId}  }>
+        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId, avatar}  }>
             {children}
         </AuthContext.Provider>
     )

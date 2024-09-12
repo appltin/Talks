@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
-import { getSignedUrl, getPopularArticle, getLatestArticle, getFavBoardArticles, getFavoriteBoardId} from './api/TalksApiService';
+import { getSignedUrl, getPopularArticle, getLatestArticle, getFavBoardArticles, incrementArticleLove, decrementArticleLove
+         ,incrementMessageLove, decrementMessageLove, getFavoriteBoardId, getArticleById, getMessagesByArticleId, addMessage
+        } from './api/TalksApiService';
 import './css/MainPage.css'
 import React, { useState } from 'react';
 import { useAuth } from './security/AuthContext';
@@ -9,15 +11,58 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGratipay } from '@fortawesome/free-brands-svg-icons';
 import Sidebar from './SidebarComponent';
 import AdvertiseComponent from './AdvertiseComponent'
+import { Modal, Button, Form } from 'react-bootstrap'; // 引入模態視窗必要組件
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 export default function MainPageCompetent() {
 
     const authContext = useAuth();
     const userId = authContext.userId
-
     const [condition, setCondition] = useState('popular')
     const [articles, setArticles] = useState([])
     const [attractArticle, setAttractArticle] = useState([])
+
+    const [showModal, setShowModal] = useState(false)
+    const [selectedArticle, setSelectedArticle] = useState(null)
+    const [selectedMessage, setSelectedMessage] = useState(null)
+
+    const [articleLiked, setArticleLikedLiked] = useState({}); // 文章是否已點擊愛心
+    const [messageLiked, setMessageLiked] = useState({}); //  留言是否已點擊愛心
+    const [comment, setComment] = useState(''); //輸入框的內容
+    const [refreshInterval, setRefreshInterval] = useState(null);
+    
+
+    // 開啟模態視窗
+    const handleShow = async(articleId) => {
+        try{
+            const article = await getArticleById(articleId)// 用id查詢文章
+            const message = await getMessagesByArticleId(articleId) // 查詢該文的留言
+            setSelectedArticle(article); //把內容傳給模組
+            setSelectedMessage(message)
+            setShowModal(true); // 模組設為可見
+
+            // 開啟自動刷新
+            const interval = setInterval(() => {
+                getArticleById(articleId).then(setSelectedArticle);
+                getMessagesByArticleId(articleId).then(setSelectedMessage);
+            }, 1000);
+
+            setRefreshInterval(interval);
+        }catch(error){
+            console.error('fail to filter getArticleById', error)
+        }
+    };
+
+    // 關閉模態視窗
+    const handleClose = () => {
+        setShowModal(false);
+        setSelectedArticle(null);
+
+        if (refreshInterval) {
+            clearInterval(refreshInterval); // 清除計時器
+            setRefreshInterval(null);
+        }
+    };
 
     useEffect(() => {
 
@@ -57,6 +102,77 @@ export default function MainPageCompetent() {
             throw error
         }
     }
+
+    // 文章愛心按鈕
+    const handleClick = async (id) => {
+        try {
+            if(!articleLiked[id]){
+                // 愛心已點，則取消愛心 -1
+                await incrementArticleLove(selectedArticle.articleId)
+            }else{
+                // 尚未點愛心，則增加愛心 +1
+                await decrementArticleLove(selectedArticle.articleId);
+            }
+            //更改愛心狀態
+            setArticleLikedLiked(prevLikeArticles => ({
+                ...prevLikeArticles,
+                [id]:!prevLikeArticles[id]
+            }))
+
+        } catch (error) {
+            console.error('Error updating article like:', error); // 輸出錯誤信息
+        } 
+    };
+
+    // 留言愛心按鈕
+    const handleMessageLove = async(id) => {
+        try{
+            if(!messageLiked[id]){ // 尚未點愛心，點擊後增加
+                await incrementMessageLove(id)
+            }else{
+                await decrementMessageLove(id)
+            }
+            //更改愛心狀態
+            setMessageLiked(prevLikeMessages => ({
+                ...prevLikeMessages,
+                [id]:!prevLikeMessages[id]
+            }))
+
+        }catch(error){
+            console.log('Error updating message like:', error)
+        }
+    }
+
+    // 當輸入內容改變時，更新 state
+    const handleInputChange = (e) => {
+        setComment(e.target.value);
+    };
+
+    const handleMessageSubmit = async() => {
+        try{     
+
+            //檢查是否為空
+            if (comment.trim() === '') {
+            alert('請輸入內容');
+            return;
+            }
+
+            const message = {
+                articleId:selectedArticle.articleId, 
+                userId:userId, 
+                content:comment
+            }
+
+            await addMessage(message)
+            alert('add message success')
+
+        }catch(error){
+            console.log('Error add message:', error)
+        }
+
+        setComment(''); // 提交後清空輸入框
+        handleClose(); // 關閉 Modal（可選）
+    };
     
 
     return (
@@ -64,12 +180,12 @@ export default function MainPageCompetent() {
                 <div className='row h-100 mainPage_row mx-auto'>
 
                     {/* 看板區 */}
-                    <div className='col-3 pe-4'>
+                    <div className='col-2 pe-4'>
                         <Sidebar fetchFavBoardArticles={fetchFavBoardArticles}/>
                     </div>
 
                     {/* 文章展示區 */}
-                    <div className='col-7 bg-white white_area p-4 no-scrollbar' style={{ overflowY : 'scroll' }}>
+                    <div className='col-8 bg-white white_area p-4 no-scrollbar' style={{ overflowY : 'scroll' }}>
                         <div className='py-2 px-4'>
 
                             {/* 選項單 */}
@@ -97,10 +213,15 @@ export default function MainPageCompetent() {
                                             </Dropdown.Menu>
                                         </Dropdown>
 
-                                        {/* 單篇文章 */}
+                                        {/* 列出所有文章 */}
                                         {articles.map((article) => (
                                             
-                                            <div key={article.articleId} className='d-flex border-bottom' style={{ height: 'auto' }}>
+                                            <div key = 
+                                                {article.articleId} 
+                                                className='d-flex border-bottom' 
+                                                style={{ height: 'auto' }}
+                                                onClick={() => handleShow(article.articleId)} // 點擊文章時顯示模態視窗
+                                            >
                                                 <div className='py-3'>
 
                                                     <div className='mb-2 mainPage_gray h5'>
@@ -138,6 +259,97 @@ export default function MainPageCompetent() {
                                                     </div>}
                                             </div>
                                         ))}
+
+                                        {/* 模態視窗 */}
+                                        {selectedArticle && (
+                                            <Modal show={showModal} onHide={handleClose} size="lg">
+                                                <Modal.Header closeButton style={{ paddingRight: '55px', borderBottom: 'none'  }}>
+                                                    <Modal.Title className='h5 mx-4'>{selectedArticle.board}</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body style={{ maxHeight: '800px', overflowY: 'auto', padding: '0px 45px' }}>
+                                                    {/* 文章 */}
+                                                    <div className='h3 pt-4 border-top'>{selectedArticle.title}</div>
+
+                                                    <div className='d-flex mt-2 mb-3 align-items-center'>
+                                                        <div className='avatar_container'>
+                                                            <img src={selectedArticle.avatar} alt='' className='mainPage_avatarImg'/>
+                                                        </div>
+                                                        <div className='ms-3 fw-bold'>{selectedArticle.username}</div>
+                                                        <div className='ms-3 mainPage_gray'>{selectedArticle.time}</div>
+                                                    </div>
+
+                                                    <div dangerouslySetInnerHTML={{ __html: selectedArticle.content }}/>
+
+                                                    <div className='d-flex align-items-center mt-3'> 
+                                                        <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" className='mainPage_iconSize'/>
+                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{selectedArticle.love}</h5>
+                                                        <i className="ms-4 bi bi-chat-heart-fill mainPage_Blue mainPage_iconSize"></i>
+                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>10</h5>
+                                                        {/* 可點的愛心 */}
+                                                        <button 
+                                                            onClick={() => handleClick(selectedArticle.articleId)} 
+                                                            className={`btn ${articleLiked[selectedArticle.articleId] ? 'liked' : 'not-liked'} ms-auto`}
+                                                        >
+                                                            <FaHeart className="heart-icon"/>
+                                                        </button>
+                                                    </div>
+
+                                                    {/* 留言 */}
+                                                    <div className='mainPage_gray mt-5 pb-2 border-bottom'>{`共${selectedMessage.length}則留言`}</div>
+
+                                                    {selectedMessage.map((message) => (
+                                                        <div className='d-flex pt-2 pb-3 border-bottom'>
+                                                            <div className='avatar_container mt-2 align-items-center'>
+                                                                <img src={message.avatar} alt='' className='mainPage_avatarImg'/>
+                                                            </div>
+                                                            <div className='ms-3 w-100'>
+                                                                <div className='d-flex align-items-center justify-content-between'>
+                                                                    <h5 className='m-0'>{message.username}</h5>
+                                                                    <div className='d-flex align-items-center'>
+                                                                        <div onClick={() => handleMessageLove(message.messageId)} className={`btn ${messageLiked[message.messageId] ? 'liked' : 'not-liked'}`}>
+                                                                            <FaHeart className="heart-icon" />
+                                                                        </div>
+                                                                        <h6 className='me-3 m-0 mainPage_loveText'>{message.love}</h6>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    {message.content}
+                                                                </div>
+                                                                <div style={{fontSize:'13px'}} className='mt-2'>
+                                                                    B1
+                                                                    <span className='mainPage_spaceTab'>·</span>
+                                                                    <span>{message.time}</span>
+                                                                    <span className='ms-2'>Reply</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </Modal.Body>
+                                                <Modal.Footer>
+                                                <div className="w-100">
+                                                    <div className="input-group px-3">
+                                                        <textarea 
+                                                            type="text" 
+                                                            className="form-control scroll mainPage_messageInput" 
+                                                            placeholder="Enter message..." 
+                                                            aria-label="Recipient's username" 
+                                                            aria-describedby="button-addon2" 
+                                                            style={{ resize: 'vertical' }}
+                                                            onChange={handleInputChange}
+                                                        />
+                                                        <button 
+                                                            className="btn btn-outline-secondary" 
+                                                            type="button" 
+                                                            id="button-addon2" 
+                                                            onClick={ () => handleMessageSubmit() }
+                                                        >
+                                                            submit
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                </Modal.Footer>
+                                            </Modal>
+                                        )}
                                         
                                     </div>
                                 </div>
@@ -148,7 +360,11 @@ export default function MainPageCompetent() {
                             {/* 單篇文章 */}
                             {attractArticle.map((article) => (
                                             
-                                            <div key={article.articleId} className='d-flex border-bottom' style={{ height: 'auto' }}>
+                                            <div key={article.articleId} 
+                                                 className='d-flex border-bottom' 
+                                                 style={{ height: 'auto' }}
+                                                 onClick={() => handleShow(article.articleId)} // 點擊文章時顯示模態視窗
+                                            >
                                                 <div className='py-3'>
 
                                                     <div className='mb-2 mainPage_gray h5'>
