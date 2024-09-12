@@ -28,7 +28,9 @@ public class UploadController {
             String bucketName = "elasticbeanstalk-ap-northeast-3-460820365574";
 
             // 使用 UUID 生成唯一的文件名，避免文件名衝突
-            String key = UUID.randomUUID() + "-" + Paths.get(file.getOriginalFilename()).getFileName().toString();
+            String originalFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
+            String cleanedFilename = originalFilename.replaceAll("[^a-zA-Z0-9.-]", "_"); // 清理文件名中的特殊字符
+            String key = UUID.randomUUID() + "-" + cleanedFilename;
 
             // 創建 S3 上傳請求
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -41,6 +43,7 @@ public class UploadController {
 
             // 構建圖片的 URL，返回給前端
             String imageUrl = String.format("https://%s.s3.amazonaws.com/%s", bucketName, key);
+            System.out.println(imageUrl);
             return ResponseEntity.ok(imageUrl);  // 返回圖片的 URL
         } catch (Exception e) {
             // 如果上傳過程中出現錯誤，返回 500 狀態碼並帶上錯誤信息
