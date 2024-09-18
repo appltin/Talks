@@ -19,13 +19,13 @@ export default function RegisterComponent() {
 
     // 頭像圖片的列表
     const avatars = [
-        { avatarName:'hedgehog', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/hedgehog.png' },
+        { avatarName:'yellowET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/yellowPinkET.png' },
+        { avatarName:'Hedgehog', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/Hedgehog.png' },
+        { avatarName:'Chimpanzees', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/Chimpanzees.png'},
+        { avatarName:'flower', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/flower.png' },
         { avatarName:'pinkET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/pinkET.png' },
-        { avatarName:'yellowET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/yellowET.png' },
-        { avatarName:'deepPinkET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/deepPinkET.png' },
-        { avatarName:'greenET', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/greenET.png' },
-        { avatarName:'Takoyaki', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/Takoyaki.png'},
-        { avatarName:'malai', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/malai.png'}
+        { avatarName:'penguin_l', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/penguin_l.png' },
+        { avatarName:'penguin_r', src: 'https://elasticbeanstalk-ap-northeast-3-460820365574.s3.ap-northeast-3.amazonaws.com/penguin_r.png'},
     ];
 
     async function handleSubmit(event) {

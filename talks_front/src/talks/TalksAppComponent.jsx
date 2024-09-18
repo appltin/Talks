@@ -5,7 +5,7 @@ import LetStartComponent from './LetStartComponent.jsx'
 import LoginComponent from './LoginComponent.jsx'
 import MainPageComponent from './MainPageComponent.jsx'
 import RegisterComponent from './RegisterCompetent.jsx'
-import EditCompotent from './EditComponent.jsx'
+import EditComponent from './EditComponent.jsx'
 import HeaderComponent from './HeaderComponent.jsx'
 import Try from './Try.jsx'
 import PageCompotent from './PageComponent.jsx';
@@ -63,7 +63,7 @@ export default function TalksAppComponent() {
                             <Route path='/edit/:articleId' element={
                                 <AuthenticatedRoute>
                                     <div>
-                                        <EditCompotent/>
+                                        <EditComponent/>
                                     </div>
                                 </AuthenticatedRoute>
                             } />

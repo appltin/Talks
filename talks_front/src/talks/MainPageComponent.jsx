@@ -29,25 +29,18 @@ export default function MainPageCompetent() {
     const [articleLiked, setArticleLikedLiked] = useState({}); // 文章是否已點擊愛心
     const [messageLiked, setMessageLiked] = useState({}); //  留言是否已點擊愛心
     const [comment, setComment] = useState(''); //輸入框的內容
-    const [refreshInterval, setRefreshInterval] = useState(null);
     
 
     // 開啟模態視窗
-    const handleShow = async(articleId) => {
+    const handleShow = async(articleId, index) => {
         try{
+            console.log(index)
             const article = await getArticleById(articleId)// 用id查詢文章
             const message = await getMessagesByArticleId(articleId) // 查詢該文的留言
             setSelectedArticle(article); //把內容傳給模組
             setSelectedMessage(message)
             setShowModal(true); // 模組設為可見
 
-            // 開啟自動刷新
-            const interval = setInterval(() => {
-                getArticleById(articleId).then(setSelectedArticle);
-                getMessagesByArticleId(articleId).then(setSelectedMessage);
-            }, 1000);
-
-            setRefreshInterval(interval);
         }catch(error){
             console.error('fail to filter getArticleById', error)
         }
@@ -58,33 +51,27 @@ export default function MainPageCompetent() {
         setShowModal(false);
         setSelectedArticle(null);
 
-        if (refreshInterval) {
-            clearInterval(refreshInterval); // 清除計時器
-            setRefreshInterval(null);
-        }
     };
 
     useEffect(() => {
 
-        // 取得熱門or最新文章
-        const fetchArticles = async() => {
-            try{
-                let data
-                if(condition === 'popular'){
-                    data = await getPopularArticle()
-                }else if(condition === 'latest'){
-                    data = await getLatestArticle()
+        const fetchArticles = async () => {
+            try {
+                let data;
+                if (condition === 'popular') {
+                    data = await getPopularArticle();
+                } else if (condition === 'latest') {
+                    data = await getLatestArticle();
                 }
-    
-                setArticles(data)
-    
-            }catch(error){
-                console.error('fail to filter article', error)
+                console.log(data)
+                setArticles(data);
+            } catch (error) {
+                console.error('fail to filter article', error);
             }
-        }
-        fetchArticles();
-
-    }, [condition])
+        };
+        fetchArticles()
+    
+    }, [condition]);
 
 
     useEffect(() => {
@@ -96,6 +83,7 @@ export default function MainPageCompetent() {
         try{
             const favoriteBoardId = await getFavoriteBoardId(userId) 
             let data = await getFavBoardArticles(favoriteBoardId)
+            console.log(data)
             setAttractArticle(data)
         }catch(error){
             console.error('fail to fetch favBoardArticles')
@@ -106,13 +94,46 @@ export default function MainPageCompetent() {
     // 文章愛心按鈕
     const handleClick = async (id) => {
         try {
+            const updatedArticles = [...articles]; // 最新or熱門文章
+            const attractArticles = [...attractArticle] //追蹤文章
+
+            // 尚未點愛心，增加愛心數量 +1
             if(!articleLiked[id]){
-                // 愛心已點，則取消愛心 -1
-                await incrementArticleLove(selectedArticle.articleId)
+                await incrementArticleLove(selectedArticle.articleId) 
+                //模態視窗
+                selectedArticle.love += 1 
+                //主頁兩個列表
+                updatedArticles.forEach((article) => { 
+                    if(article.articleId === id){
+                        article.love += 1
+                    }
+                })
+                attractArticles.forEach((article) => {
+                    if(article.articleId === id){
+                        article.love += 1
+                    }
+                })
+
+            // 愛心已點，則增加愛心 -1
             }else{
-                // 尚未點愛心，則增加愛心 +1
-                await decrementArticleLove(selectedArticle.articleId);
+                await decrementArticleLove(selectedArticle.articleId);      
+                selectedArticle.love -= 1      
+                updatedArticles.forEach((article) => {
+                    if(article.articleId === id){
+                        article.love -= 1
+                    }
+                })       
+                attractArticles.forEach((article) => {
+                    if(article.articleId === id){
+                        article.love -= 1
+                    }
+                })        
             }
+
+            // 更新 articles 狀態
+            setArticles(updatedArticles);
+            setAttractArticle(attractArticles);
+
             //更改愛心狀態
             setArticleLikedLiked(prevLikeArticles => ({
                 ...prevLikeArticles,
@@ -171,8 +192,14 @@ export default function MainPageCompetent() {
         }
 
         setComment(''); // 提交後清空輸入框
-        handleClose(); // 關閉 Modal（可選）
     };
+
+    // 格式化redis傳來的時間
+    function formatTime(timeArray) {
+        const [year, month, day, hour, minute, second] = timeArray;
+        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        return formattedDate;
+    }
     
 
     return (
@@ -214,7 +241,7 @@ export default function MainPageCompetent() {
                                         </Dropdown>
 
                                         {/* 列出所有文章 */}
-                                        {articles.map((article) => (
+                                        {articles && articles.map((article) => (
                                             
                                             <div key = 
                                                 {article.articleId} 
@@ -231,7 +258,7 @@ export default function MainPageCompetent() {
                                                         <span>{ article.username }</span>
                                                         <span className='mainPage_spaceTab'> · </span>
 
-                                                        <span>{new Date(article.time).toLocaleDateString()}</span>
+                                                        <span>{formatTime(article.time)}</span>
                                                     </div>
 
                                                     <div className='mt-3 mb-3 fw-bold h2 mainPage_deepGray fs-3'>{article.title}</div>
@@ -246,7 +273,7 @@ export default function MainPageCompetent() {
                                                         <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" className='mainPage_iconSize'/>
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.love}</h5>
                                                         <i className="ms-4 bi bi-chat-heart-fill mainPage_Blue mainPage_iconSize"></i>
-                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>10</h5>
+                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.messageCount}</h5>
                                                     </div>
                                                 </div>
 
@@ -299,7 +326,7 @@ export default function MainPageCompetent() {
 
                                                     {selectedMessage.map((message) => (
                                                         <div className='d-flex pt-2 pb-3 border-bottom'>
-                                                            <div className='avatar_container mt-2 align-items-center'>
+                                                            <div className='avatar_container mt-2'>
                                                                 <img src={message.avatar} alt='' className='mainPage_avatarImg'/>
                                                             </div>
                                                             <div className='ms-3 w-100'>
@@ -331,6 +358,7 @@ export default function MainPageCompetent() {
                                                         <textarea 
                                                             type="text" 
                                                             className="form-control scroll mainPage_messageInput" 
+                                                            value={comment} // 將 value 綁定到 comment
                                                             placeholder="Enter message..." 
                                                             aria-label="Recipient's username" 
                                                             aria-describedby="button-addon2" 
@@ -358,7 +386,7 @@ export default function MainPageCompetent() {
                             {/* 選項二 追蹤的看板 */}
                             <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             {/* 單篇文章 */}
-                            {attractArticle.map((article) => (
+                            {attractArticle && attractArticle.map((article) => (
                                             
                                             <div key={article.articleId} 
                                                  className='d-flex border-bottom' 
@@ -389,7 +417,7 @@ export default function MainPageCompetent() {
                                                         <FontAwesomeIcon icon={faGratipay} color="#fa3b2ae5" className='mainPage_iconSize' />
                                                         <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.love}</h5>
                                                         <i className="ms-4 bi bi-chat-heart-fill  mainPage_Blue  mainPage_iconSize"></i>
-                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>10</h5>
+                                                        <h5 className="ms-1 mainPage_gray m-0" style={{ lineHeight: '25px' }}>{article.messageCount}</h5>
                                                     </div>
                                                 </div>
 

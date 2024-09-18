@@ -3,3 +3,10 @@
     font-size: 22px;
     width: 100px;
 }
+
+.boardPage_greyButton{
+    color: rgb(255, 255, 255);
+    background-color: #6119F3;
+    font-size: 22px;
+    width: 100px;
+}

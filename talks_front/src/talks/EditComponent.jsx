@@ -1,5 +1,5 @@
 import React,{ useState, useEffect, useRef } from 'react';
-import { getSignedUrl, deleteImage , addArticle, getArticleById} from './api/TalksApiService';
+import { getSignedUrl, deleteImage , addArticle, getArticleById, getAllBoardsInformation, updateArticle} from './api/TalksApiService';
 import './css/Edit.css'
 import { useAuth } from './security/AuthContext'
 import 'bootstrap';
@@ -9,7 +9,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import RuleModal from './RuleModal'
 import { Modal, Button } from 'react-bootstrap';
 
-export default function EditCompotent() {
+export default function EditComponent() {
 
     const { articleId } = useParams() // 從 URL 中取得 articleId
     const [title, setTitle] = useState('');
@@ -18,6 +18,8 @@ export default function EditCompotent() {
     const username = authContext.username;
     const userId = authContext.userId;
     const [border, setBorder] = useState('Select posting board')
+    const [boardId, setBoardId] = useState(null)
+    const [allBoard, setAllBoard] = useState([])
     const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
@@ -46,6 +48,20 @@ export default function EditCompotent() {
             setBorder(article.board);
         } catch (error) {
             console.error('Failed to load article:', error);
+        }
+    };
+
+    useEffect(() => {
+        getAllBoard()
+    }, []);
+
+    // 取得所有看板資訊
+    const getAllBoard = async () => {
+        try {
+            const boards = await getAllBoardsInformation(); 
+            setAllBoard(boards)
+        } catch (error) {
+            console.error('Failed to get all board:', error);
         }
     };
 
@@ -129,17 +145,24 @@ export default function EditCompotent() {
         const article = {
             title : title,
             userId : userId,
-            username : username,
             content : editorContent,
-            border : border
+            boardId : boardId,
+            board : border
         }
 
         try{
             //檢查是否已選擇看板
             if(border !== 'Select posting board' && title.trim() !== ''){
-                // 將文章保存到數據庫
-                console.log(article)
-                const result = await addArticle(article)
+
+                if (articleId === '-1') {
+                    // 將文章保存到數據庫
+                    const result = await addArticle(article)
+                } else {
+                    article.articleId = articleId;
+                    console.log(article)
+                    await updateArticle(article)
+                }
+
                 alert('Post successful!')
                 navigate('/mainPage')
 
@@ -190,9 +213,18 @@ export default function EditCompotent() {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1" onClick={() => {setBorder('mackup')}}>mackup</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2" onClick={() => {setBorder('tech')}}>tech</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3" onClick={() => {setBorder('soft engineer')}}>soft engineer</Dropdown.Item>
+                                        {allBoard.map((board) => (
+                                            <Dropdown.Item
+                                                key={board.boardName}
+                                                href="#"
+                                                onClick={() => {
+                                                    setBorder(board.boardName); 
+                                                    setBoardId(board.id);
+                                                }}
+                                            >
+                                                {board.boardName}
+                                            </Dropdown.Item>
+                                        ))}
                                     </Dropdown.Menu>
                                 </Dropdown>
 
@@ -283,9 +315,18 @@ export default function EditCompotent() {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1" onClick={() => {setBorder('mackup')}}>mackup</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2" onClick={() => {setBorder('tech')}}>tech</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3" onClick={() => {setBorder('soft engineer')}}>soft engineer</Dropdown.Item>
+                                        {allBoard.map((board) => (
+                                            <Dropdown.Item
+                                                key={board.boardName}
+                                                href="#"
+                                                onClick={() => {
+                                                    setBorder(board.boardName); 
+                                                    setBoardId(board.id);
+                                                }}
+                                            >
+                                                {board.boardName}
+                                            </Dropdown.Item>
+                                        ))}
                                     </Dropdown.Menu>
                                 </Dropdown>
 

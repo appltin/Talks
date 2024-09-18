@@ -22,6 +22,7 @@ export default function AllBoardComponent() {
     const fetchBoards = async () => {
     try {
         const boards = await getAllBoardsInformation();
+        console.log(boards)
         if (!Array.isArray(boards)) {
             console.error('Received data is not an array:', boards);
             return;
@@ -89,7 +90,7 @@ export default function AllBoardComponent() {
 
                                 <button 
                                     type="button" 
-                                    className={`btn ${starredItems[board.id] ? 'boardPage_attracted' : 'updatePage_greyButton' } ms-auto`} 
+                                    className={`btn ${starredItems[board.id] ? 'boardPage_attracted' : 'boardPage_greyButton' } ms-auto`} 
                                     onClick={ () => { handleStarClick(board.id) } }
                                 >
                                     {starredItems[board.id] ? 'Tracked' : 'Track'}

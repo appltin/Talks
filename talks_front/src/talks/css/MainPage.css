@@ -100,10 +100,9 @@ display: none; /* 適用於 Chrome、Safari 和 Opera 隱藏滾動條 */
 }
 
 .mainPage_avatarImg{
-    padding-top: 9px;
-    width: 128% !important;
-    height: 128% !important;
-    border-radius: 50%; /* 確保圖片也是圓形的 */
+    padding-top: 6px;
+    width: 127% !important;
+    height: 127% !important;
     object-fit: cover; /* 維持圖片比例，避免變形 */
 }
 

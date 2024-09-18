@@ -146,11 +146,11 @@ function UpdateComponent() {
               </div>
 
               <button 
-                onClick={() => setSelectedMenu('myArticle')}
-                className='d-flex w-100 justify-content-start align-items-center py-3 updatePage_button border-0'
+                onClick = {() => setSelectedMenu('myArticle')}
+                className = 'd-flex w-100 justify-content-start align-items-center py-3 updatePage_button border-0'
               >
                   <FontAwesomeIcon icon={ faFilePen } className='me-3 updatePage_iArticle'/>
-                  <h3 className=''>Edit article</h3>
+                  <h3 className = 'm-0'>Edit article</h3>
               </button>
 
               <button 
@@ -158,15 +158,15 @@ function UpdateComponent() {
                 className='d-flex w-100 justify-content-start align-items-center py-3 updatePage_button border-0'
               >
                   <i class="bi bi-hearts me-3 updatePage_iLove"></i>
-                  <h3 className=''>Favotie boards</h3>
+                  <h3 className='m-0'>Favotie boards</h3>
               </button>
 
               <button 
-                onClick={() => setSelectedMenu('setting')}
-                className='d-flex w-100 justify-content-start align-items-center py-3 updatePage_button border-0'
+                onClick = {() => setSelectedMenu('setting')}
+                className = 'd-flex w-100 justify-content-start align-items-center py-3 updatePage_button border-0'
               >
-                  <i class="bi bi-gear-fill me-3 updatePage_i"></i>
-                  <h3 className=''>Setting</h3>
+                  <i class = "bi bi-gear-fill me-3 updatePage_i"></i>
+                  <h3 className = 'm-0'>Setting</h3>
               </button>
           </div>
 
@@ -261,7 +261,7 @@ function UpdateComponent() {
                       </div>
                       <button 
                         type="button" 
-                        class="btn updatePage_greyButton"
+                        class="btn updatePage_greyButton text-white d-flex justify-content-center"
                         onClick={ () => {handleCancelSubmit(board.id)} }
                       >
                         Tracking
@@ -312,7 +312,7 @@ function UpdateComponent() {
                               />
                             </Form.Group>
                             <div className="d-flex justify-content-end">
-                              <button type="submit" className="btn updatePage_greyButton border-0 text-body">
+                              <button type="submit" className="btn updatePage_greyButton border-0 text-white">
                                 save
                               </button>
                             </div>

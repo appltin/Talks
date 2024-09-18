@@ -11,8 +11,9 @@
 
 .updatePage_button{
     background-color: rgb(68, 22, 159) !important;
-    color: aliceblue;
+    color: aliceblue !important;
     font-size: 20px;
+    height: 90px;
 }
 
 .updatePage_i{
@@ -94,13 +95,13 @@
 
 .updatePage_greyButton{
     background-color: #6119F3;
-    color: white;
     font-size: 22px;
     width: 100px;
 }
 
 .updatePage_settingButton{
     width: 90px;
+    color: white !important;
 }
 
 

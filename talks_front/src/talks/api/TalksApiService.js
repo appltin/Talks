@@ -355,3 +355,14 @@ export async function deleteAccount(userId) {
         throw error; // 重新拋出錯誤，方便調用方處理
     }
 }
+
+//更改密碼
+export async function updateArticle(article){
+    try{
+        const response = await axios.post('http://localhost:8080/article/edit', article)
+        return response.data
+    }catch(error){
+        console.log('Failed to update article:', error)
+        throw error;
+    }
+};
