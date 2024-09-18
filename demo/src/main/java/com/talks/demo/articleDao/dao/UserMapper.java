@@ -48,15 +48,23 @@ public interface UserMapper {
     void addArticle(Article article);
 
     //讀取熱門文章
-    @Select("SELECT a.*, u.username FROM article a left join user u on a.user_id = u.id ORDER BY love DESC LIMIT 40")
+    @Select("SELECT a.*, u.username, COUNT(m.message_id) as message_count FROM article a \n" +
+            "LEFT JOIN user u ON a.user_id = u.id \n" +
+            "LEFT JOIN message m ON a.article_id = m.article_id\n" +
+            "GROUP BY a.article_id, u.username\n" +
+            "ORDER BY a.love DESC LIMIT 40")
     List<ArticleDTO> getHotArticle();
 
     //讀取最新文章
-    @Select("SELECT a.*, u.username FROM article a left join user u on a.user_id = u.id ORDER BY time DESC LIMIT 40")
+    @Select("SELECT a.*, u.username, COUNT(m.message_id) as message_count FROM article a \n" +
+            "LEFT JOIN user u ON a.user_id = u.id \n" +
+            "LEFT JOIN message m ON a.article_id = m.article_id\n" +
+            "GROUP BY a.article_id, u.username\n" +
+            "ORDER BY a.time DESC LIMIT 40")
     List<ArticleDTO> getNewArticle();
 
     //更新文章
-    @Update("UPDATE article SET title = #{title}, content = #{content} WHERE article_id = #{articleId}")
+    @Update("UPDATE article SET title = #{title}, content = #{content} , board_id = #{boardId}, board = #{board} WHERE article_id = #{articleId}")
     void updateArticle(Article article);
 
     //刪除文章

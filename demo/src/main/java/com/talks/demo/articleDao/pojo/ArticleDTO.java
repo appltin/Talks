@@ -21,6 +21,7 @@ public class ArticleDTO {
     private String avatar;
     private String content;
     private String firstImgUrl;
+    private int messageCount;
     private int love;
     private LocalDateTime time;
 }

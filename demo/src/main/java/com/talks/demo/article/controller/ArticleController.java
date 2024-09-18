@@ -8,12 +8,16 @@ import com.talks.demo.articleDao.pojo.User;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,6 +31,18 @@ public class ArticleController {
 
     @Autowired
     private UserMapper userMapper;
+
+    // 修改常量名稱以更具描述性
+    private static final String POPULAR_ARTICLES_KEY = "popular_articles";
+    private static final String LATEST_ARTICLES_KEY = "latest_articles";
+    private static final String SPECIFIC_ARTICLE_KEY = "specific_articles";
+    private static final String ALL_BOARDS_KEY = "all_boards";
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;  // 注入 ObjectMapper
 
     //取得頭像和userId
     @GetMapping("/getUerInformation")
@@ -72,25 +88,33 @@ public class ArticleController {
     @GetMapping("/popular")
     public List<ArticleDTO> getHotArticle(){
         try {
-            List<ArticleDTO> articles = userMapper.getHotArticle();
-            articles.forEach(article -> {
-            // 對每一篇文章進行處理
-                // 使用 Jsoup 解析文章內容的 HTML
-                Document doc = Jsoup.parse(article.getContent());
+            // 先從 Redis 查詢熱門文章緩存
+            List<ArticleDTO> hotArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(POPULAR_ARTICLES_KEY);
 
-                // 提取前20個字作為摘要
-                String text = doc.body().text();
-                String excerpt = text.length() > 45 ? text.substring(0, 45) : text; // 取得前20個字
-                article.setContent(excerpt);
+            if(hotArticle == null){
+                List<ArticleDTO> articles = userMapper.getHotArticle();
 
-                // 提取第一張圖片的 URL
-                Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
-                String imageUrl = img != null ? img.attr("src") : "";
-                article.setFirstImgUrl(imageUrl);
-            });
-            System.out.println(articles);
+                articles.forEach(article -> {
+                    // 對每一篇文章進行處理
+                    // 使用 Jsoup 解析文章內容的 HTML
+                    Document doc = Jsoup.parse(article.getContent());
 
-            return articles;
+                    // 提取前20個字作為摘要
+                    String text = doc.body().text();
+                    String excerpt = text.length() > 45 ? text.substring(0, 45) : text; // 取得前20個字
+                    article.setContent(excerpt);
+
+                    // 提取第一張圖片的 URL
+                    Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
+                    String imageUrl = img != null ? img.attr("src") : "";
+                    article.setFirstImgUrl(imageUrl);
+                });
+
+                // 將結果存入 Redis 並設置過期時間
+                redisTemplate.opsForValue().set(POPULAR_ARTICLES_KEY, articles, 20, TimeUnit.MINUTES);
+            }
+            return hotArticle;
+
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();  // 返回空列表
@@ -101,25 +125,33 @@ public class ArticleController {
     @GetMapping("/latest")
     public List<ArticleDTO> getNewArticle(){
         try {
-            List<ArticleDTO> articles = userMapper.getNewArticle();
+            // 先從 Redis 查詢熱門文章緩存
+            List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
 
-            articles.forEach(article -> {
-                // 對每一篇文章進行處理
-                // 使用 Jsoup 解析文章內容的 HTML
-                Document doc = Jsoup.parse(article.getContent());
+            if(latestArticle == null){
+                List<ArticleDTO> articles = userMapper.getNewArticle();
 
-                // 提取前20個字作為摘要
-                String text = doc.body().text();
-                String excerpt = text.length() > 30 ? text.substring(0, 30) : text; // 取得前20個字
-                article.setContent(excerpt);
+                articles.forEach(article -> {
+                    // 對每一篇文章進行處理
+                    // 使用 Jsoup 解析文章內容的 HTML
+                    Document doc = Jsoup.parse(article.getContent());
 
-                // 提取第一張圖片的 URL
-                Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
-                String imageUrl = img != null ? img.attr("src") : "";
-                article.setFirstImgUrl(imageUrl);
-            });
+                    // 提取前20個字作為摘要
+                    String text = doc.body().text();
+                    String excerpt = text.length() > 30 ? text.substring(0, 30) : text; // 取得前20個字
+                    article.setContent(excerpt);
 
-            return articles;
+                    // 提取第一張圖片的 URL
+                    Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
+                    String imageUrl = img != null ? img.attr("src") : "";
+                    article.setFirstImgUrl(imageUrl);
+                });
+
+                //存入緩存
+                redisTemplate.opsForValue().set(LATEST_ARTICLES_KEY, articles, 20, TimeUnit.MINUTES);
+            }
+
+            return latestArticle;
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();  // 返回空列表
@@ -219,14 +251,24 @@ public class ArticleController {
     @GetMapping("/getArticleById/{articleId}")
     public ResponseEntity<?> getArticleById(@PathVariable int articleId) {
         try {
-            ArticleDTO article = userMapper.selectArticleById(articleId);
+            // 根據 articleId 動態生成 Redis 鍵
+            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
 
-            if (article != null) {
-                return ResponseEntity.ok(article);
+            // 從 Redis 查詢熱門文章緩存
+            Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
+            ArticleDTO specificArticle = null;
+
+            if (cachedArticle != null) {
+                // 使用 ObjectMapper 將 LinkedHashMap 轉換為 ArticleDTO
+                specificArticle = objectMapper.convertValue(cachedArticle, ArticleDTO.class);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Article with the specified ID not found");
+                specificArticle = userMapper.selectArticleById(articleId);
+                // 將結果存入 Redis 並設置過期時間
+                redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
             }
+
+            return ResponseEntity.ok(specificArticle);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -281,9 +323,18 @@ public class ArticleController {
     //所有看板的相關資料
     @GetMapping("/getAllBoards")
     public ResponseEntity<?> getAllBoards() {
+
         try {
-            List<Board> boards = userMapper.selectAllBoards();
-            return ResponseEntity.ok(boards);
+            // 先從 Redis 查詢熱門文章緩存
+            List<Board> allBoards =  (List<Board>) redisTemplate.opsForValue().get(ALL_BOARDS_KEY);
+
+            if(allBoards == null){
+                List<Board> boards = userMapper.selectAllBoards();
+                //存入緩存
+                redisTemplate.opsForValue().set(ALL_BOARDS_KEY, boards, 1, TimeUnit.DAYS);
+            }
+
+            return ResponseEntity.ok(allBoards);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get all boards");
         }

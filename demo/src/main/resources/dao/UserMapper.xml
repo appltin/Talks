@@ -22,22 +22,24 @@
     </select>
     
     <insert id="addArticle" parameterType="article">
-        insert into article (title, user_id, username, content, board)
-        values(#{title}, #{userId}, #{username}, #{content}, #{board})
+        insert into article (title, user_id, board_id, board, content)
+        values(#{title}, #{userId}, #{boardId}, #{board}, #{content})
     </insert>
 
     <!--select * from article -->
     <!--where board_id in (1, 2, 3) -->
     <!--order by love desc -->
     <!--limit 30-->
-    <select id="getFavBoardArticles" parameterType="list" resultType="articleDTO">
-        SELECT a.*, u.username
+    <select id="getFavBoardArticles" parameterType="map" resultType="articleDTO">
+        SELECT a.article_id, a.title, a.board, a.content, a.love, u.username, COUNT(m.message_id) AS message_count
         FROM article a
         LEFT JOIN user u ON a.user_id = u.id
+        LEFT JOIN message m ON a.article_id = m.article_id
         WHERE a.board_id IN
         <foreach item="id" collection="boardIds" open="(" separator="," close=")">
             #{id}
         </foreach>
+        GROUP BY a.article_id, a.title, a.content, a.love, u.username
         ORDER BY a.love DESC
         LIMIT 30
     </select>
