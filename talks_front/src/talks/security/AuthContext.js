@@ -7,9 +7,16 @@ import { getAvatarAndUerId, getUserInformation } from '../api/TalksApiService'
 export const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
 
-export const executeAuthenticationService
-    = (username, password) => 
-        formApiClient.post(`/login`,{username,password})
+export const executeAuthenticationService = (username, password) => 
+    axios.post('http://localhost:8080/login', {
+        username,
+        password
+    }, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cache-Control': 'no-cache',
+        },
+    });
 
 
 //2: Share the created context with other components
@@ -25,6 +32,7 @@ export default function AuthProvider({ children }) {
     // 設置 Axios 攔截器
     function setAuthInterceptor(username, password) {
         const token = btoa(`${username}:${password}`);
+        console.log(token)
         axios.interceptors.request.use(
             config => {
                 config.headers['Authorization'] = `Basic ${token}`;
@@ -66,12 +74,25 @@ export default function AuthProvider({ children }) {
 
 
     function logout() {
+        // 清除本地儲存的 Token
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
+
+        // 可選：清除 Axios 攔截器
+        axios.interceptors.request.use(
+            config => {
+                config.headers['Authorization'] = '';
+                return config;
+            }
+        );
+        
         setAuthenticated(false)
         setUsername(null)
+        
     }
 
     return (
-        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId, avatar, starredItems, setStarredItems}  }>
+        <AuthContext.Provider value={ {isAuthenticated, login, logout, username, userId, avatar, starredItems, setStarredItems, setAuthInterceptor}  }>
             {children}
         </AuthContext.Provider>
     )

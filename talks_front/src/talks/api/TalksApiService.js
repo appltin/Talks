@@ -142,7 +142,9 @@ export async function getFavBoardArticles(boardIds) {
                 boardIds: boardIds
             },
             paramsSerializer: params => {
-                return `boardIds=${params.boardIds.join(',')}`;
+                // 確保 boardIds 是陣列並且不為 null 或 undefined
+                const validBoardIds = Array.isArray(params.boardIds) ? params.boardIds : [];
+                return `boardIds=${validBoardIds.join(',')}`;
             }
         });
         

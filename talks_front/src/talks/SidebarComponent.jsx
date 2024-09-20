@@ -21,7 +21,10 @@ export default function Sidebar( {fetchFavBoardArticles } ) {
             //取得看板的名稱和圖片
             const setBoardInformation = async () => {
                 const boardInformation = await getRecommendBoardsInformation(); 
-                setSidebarList(boardInformation)
+                console.log(boardInformation); // 檢查資料格式
+                if (Array.isArray(boardInformation)) {
+                    setSidebarList(boardInformation);
+                }
             }
             setBoardInformation()
 
@@ -105,7 +108,7 @@ export default function Sidebar( {fetchFavBoardArticles } ) {
                 Recommended
             </div>
 
-            {sidebarList.map((img) => (
+            {sidebarList && sidebarList.map((img) => (
                 <button
                 className='row sidebar_button border-0 p-2 align-items-center'
                 key = {img.boardName}

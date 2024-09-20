@@ -53,7 +53,7 @@ export default function PageCompotent() {
                             {/* 選項二 追蹤的看板 */}
                             <div className="">
                                 {/* 單篇文章 */}
-                                {specifyBoardArticle.map((article) => (
+                                {specifyBoardArticle && specifyBoardArticle.map((article) => (
                                     <div key={article.articleId} 
                                         className='d-flex border-bottom' 
                                         style={{ height: 'auto' 

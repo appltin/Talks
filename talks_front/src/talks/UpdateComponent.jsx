@@ -21,6 +21,9 @@ function UpdateComponent() {
   const authContext = useAuth();
   const userId = authContext.userId
   const avatar = authContext.avatar
+  const username = authContext.username
+  // const setAuthInterceptor = authContext.setAuthInterceptor
+  const logout = authContext.logout
   const navigate = useNavigate();
 
   const [show, setShow] = useState(false);
@@ -45,6 +48,13 @@ function UpdateComponent() {
       if (password === confirmPassword) {
         await changePassword(password, userId)
         alert('Password changed successfully ')
+        // 移除 localStorage 中的舊 Token
+        localStorage.removeItem('authToken');
+
+        // 移除 sessionStorage 中的舊 Token
+        sessionStorage.removeItem('authToken');
+        logout()
+        // navigate('/')
         handleClose();
         
       } else {
@@ -180,7 +190,7 @@ function UpdateComponent() {
                   <div className='updatePage_noShadow'>
                     <h3 className='border-bottom pt-1 pb-4 text-body'>My article</h3>
 
-                    {myArticle.map((article) => (
+                    {myArticle && myArticle.map((article) => (
                                             
                       <div key = 
                           {article.articleId} 

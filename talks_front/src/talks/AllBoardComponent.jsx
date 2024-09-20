@@ -77,7 +77,7 @@ export default function AllBoardComponent() {
                     <h3 className='py-4 px-4 border-bottom'>Board Overview</h3>
 
                     <div className='updatePage_imgContainer w-100'>
-                        {board.map((board) => (
+                        {board && board.map((board) => (
                             <div className='d-flex my-4 align-items-center' key={board.id}>
                                 <img 
                                     src={board.imgUrl} 

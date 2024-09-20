@@ -34,7 +34,6 @@ export default function MainPageCompetent() {
     // 開啟模態視窗
     const handleShow = async(articleId, index) => {
         try{
-            console.log(index)
             const article = await getArticleById(articleId)// 用id查詢文章
             const message = await getMessagesByArticleId(articleId) // 查詢該文的留言
             setSelectedArticle(article); //把內容傳給模組
@@ -69,7 +68,17 @@ export default function MainPageCompetent() {
                 console.error('fail to filter article', error);
             }
         };
-        fetchArticles()
+    
+        // 初次加載時調用
+        fetchArticles();
+    
+        // 設置每30秒調用一次的定時器
+        const intervalId = setInterval(() => {
+            fetchArticles();
+        }, 30000); // 每 30 秒
+    
+        // 在組件卸載或 `condition` 變更時清除定時器
+        return () => clearInterval(intervalId);
     
     }, [condition]);
 
@@ -83,7 +92,6 @@ export default function MainPageCompetent() {
         try{
             const favoriteBoardId = await getFavoriteBoardId(userId) 
             let data = await getFavBoardArticles(favoriteBoardId)
-            console.log(data)
             setAttractArticle(data)
         }catch(error){
             console.error('fail to fetch favBoardArticles')
@@ -146,12 +154,15 @@ export default function MainPageCompetent() {
     };
 
     // 留言愛心按鈕
-    const handleMessageLove = async(id) => {
+    const handleMessageLove = async(id, index) => {
         try{
             if(!messageLiked[id]){ // 尚未點愛心，點擊後增加
                 await incrementMessageLove(id)
+                selectedMessage[index].love += 1
+
             }else{
                 await decrementMessageLove(id)
+                selectedMessage[index].love -= 1
             }
             //更改愛心狀態
             setMessageLiked(prevLikeMessages => ({
@@ -192,6 +203,10 @@ export default function MainPageCompetent() {
         }
 
         setComment(''); // 提交後清空輸入框
+
+        // 重新抓取該文章的留言，刷新留言列表
+        const updatedMessages = await getMessagesByArticleId(selectedArticle.articleId);
+        setSelectedMessage(updatedMessages);
     };
 
     // 格式化redis傳來的時間
@@ -241,7 +256,7 @@ export default function MainPageCompetent() {
                                         </Dropdown>
 
                                         {/* 列出所有文章 */}
-                                        {articles && articles.map((article) => (
+                                        {Array.isArray(articles) && articles.map((article) => (
                                             
                                             <div key = 
                                                 {article.articleId} 
@@ -324,7 +339,7 @@ export default function MainPageCompetent() {
                                                     {/* 留言 */}
                                                     <div className='mainPage_gray mt-5 pb-2 border-bottom'>{`共${selectedMessage.length}則留言`}</div>
 
-                                                    {selectedMessage.map((message) => (
+                                                    {selectedMessage.map((message, index) => (
                                                         <div className='d-flex pt-2 pb-3 border-bottom'>
                                                             <div className='avatar_container mt-2'>
                                                                 <img src={message.avatar} alt='' className='mainPage_avatarImg'/>
@@ -333,7 +348,7 @@ export default function MainPageCompetent() {
                                                                 <div className='d-flex align-items-center justify-content-between'>
                                                                     <h5 className='m-0'>{message.username}</h5>
                                                                     <div className='d-flex align-items-center'>
-                                                                        <div onClick={() => handleMessageLove(message.messageId)} className={`btn ${messageLiked[message.messageId] ? 'liked' : 'not-liked'}`}>
+                                                                        <div onClick={() => handleMessageLove(message.messageId, index)} className={`btn ${messageLiked[message.messageId] ? 'liked' : 'not-liked'}`}>
                                                                             <FaHeart className="heart-icon" />
                                                                         </div>
                                                                         <h6 className='me-3 m-0 mainPage_loveText'>{message.love}</h6>
@@ -386,7 +401,7 @@ export default function MainPageCompetent() {
                             {/* 選項二 追蹤的看板 */}
                             <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                             {/* 單篇文章 */}
-                            {attractArticle && attractArticle.map((article) => (
+                            {Array.isArray(attractArticle) && attractArticle.map((article) => (
                                             
                                             <div key={article.articleId} 
                                                  className='d-flex border-bottom' 

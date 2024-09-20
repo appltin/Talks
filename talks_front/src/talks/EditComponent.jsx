@@ -213,7 +213,7 @@ export default function EditComponent() {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        {allBoard.map((board) => (
+                                        {allBoard && allBoard.map((board) => (
                                             <Dropdown.Item
                                                 key={board.boardName}
                                                 href="#"
@@ -315,7 +315,7 @@ export default function EditComponent() {
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
-                                        {allBoard.map((board) => (
+                                        {allBoard && allBoard.map((board) => (
                                             <Dropdown.Item
                                                 key={board.boardName}
                                                 href="#"
