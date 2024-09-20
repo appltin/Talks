@@ -5,6 +5,7 @@ import com.talks.demo.articleDao.pojo.Article;
 import com.talks.demo.articleDao.pojo.ArticleDTO;
 import com.talks.demo.articleDao.pojo.Board;
 import com.talks.demo.articleDao.pojo.User;
+import org.jsoup.safety.Safelist;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,12 +77,27 @@ public class ArticleController {
     @PostMapping("/add")
     public String addArticle(@RequestBody Article article){
         try {
+            // 淨化文章內容，防止 XSS 攻擊
+            String sanitizedContent = sanitizeHtml(article.getContent());
+            article.setContent(sanitizedContent);
+
             userMapper.addArticle(article);
             return "add article success";
         } catch (Exception e) {
             e.printStackTrace();
-            return "add article fail";
+            return "add article fail" + e.getMessage();
         }
+    }
+
+    // HTML 淨化方法
+    public String sanitizeHtml(String content) {
+        Safelist safelist = new Safelist()
+                .addTags("a", "b", "i", "strong", "em", "p", "ul", "li", "ol", "br", "h1", "h2", "img", "blockquote")
+                .addAttributes("a", "href")
+                .addAttributes("img", "src", "alt", "title")
+                .addProtocols("a", "href", "http", "https")
+                .addProtocols("img", "src", "http", "https");  // 限制 `<img>` 標籤的 src 協議為 http 和 https
+        return Jsoup.clean(content, safelist);
     }
 
     //獲取熱門文
@@ -92,26 +108,7 @@ public class ArticleController {
             List<ArticleDTO> hotArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(POPULAR_ARTICLES_KEY);
 
             if(hotArticle == null){
-                List<ArticleDTO> articles = userMapper.getHotArticle();
-
-                articles.forEach(article -> {
-                    // 對每一篇文章進行處理
-                    // 使用 Jsoup 解析文章內容的 HTML
-                    Document doc = Jsoup.parse(article.getContent());
-
-                    // 提取前20個字作為摘要
-                    String text = doc.body().text();
-                    String excerpt = text.length() > 45 ? text.substring(0, 45) : text; // 取得前20個字
-                    article.setContent(excerpt);
-
-                    // 提取第一張圖片的 URL
-                    Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
-                    String imageUrl = img != null ? img.attr("src") : "";
-                    article.setFirstImgUrl(imageUrl);
-                });
-
-                // 將結果存入 Redis 並設置過期時間
-                redisTemplate.opsForValue().set(POPULAR_ARTICLES_KEY, articles, 20, TimeUnit.MINUTES);
+                hotArticle = refreshHotArticle();
             }
             return hotArticle;
 
@@ -119,6 +116,34 @@ public class ArticleController {
             e.printStackTrace();
             return Collections.emptyList();  // 返回空列表
         }
+    }
+
+    public List<ArticleDTO> refreshHotArticle(){
+        List<ArticleDTO> articles = userMapper.getHotArticle();
+
+        articles.forEach(article -> {
+            // 對每一篇文章進行處理
+            // 使用 Jsoup 解析文章內容的 HTML
+            Document doc = Jsoup.parse(article.getContent());
+
+            // 提取前20個字作為摘要
+            String text = doc.body().text();
+            String excerpt = text.length() > 45 ? text.substring(0, 45) : text; // 取得前20個字
+            article.setContent(excerpt);
+
+            // 提取第一張圖片的 URL
+            Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
+            String imageUrl = img != null ? img.attr("src") : "";
+            article.setFirstImgUrl(imageUrl);
+
+            // 將文章的 articleId 加入到熱門文章的 Set 中
+            redisTemplate.opsForSet().add("hotArticleIds", article.getArticleId());
+        });
+
+        // 將結果存入 Redis 並設置過期時間
+        redisTemplate.opsForValue().set(POPULAR_ARTICLES_KEY, articles, 30, TimeUnit.MINUTES);
+
+        return articles;
     }
 
     //獲取最新文
@@ -129,26 +154,7 @@ public class ArticleController {
             List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
 
             if(latestArticle == null){
-                List<ArticleDTO> articles = userMapper.getNewArticle();
-
-                articles.forEach(article -> {
-                    // 對每一篇文章進行處理
-                    // 使用 Jsoup 解析文章內容的 HTML
-                    Document doc = Jsoup.parse(article.getContent());
-
-                    // 提取前20個字作為摘要
-                    String text = doc.body().text();
-                    String excerpt = text.length() > 30 ? text.substring(0, 30) : text; // 取得前20個字
-                    article.setContent(excerpt);
-
-                    // 提取第一張圖片的 URL
-                    Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
-                    String imageUrl = img != null ? img.attr("src") : "";
-                    article.setFirstImgUrl(imageUrl);
-                });
-
-                //存入緩存
-                redisTemplate.opsForValue().set(LATEST_ARTICLES_KEY, articles, 20, TimeUnit.MINUTES);
+                latestArticle = refreshLatestArticle();
             }
 
             return latestArticle;
@@ -158,16 +164,74 @@ public class ArticleController {
         }
     }
 
+    public List<ArticleDTO> refreshLatestArticle(){
+        List<ArticleDTO> articles = userMapper.getNewArticle();
+
+        articles.forEach(article -> {
+            // 對每一篇文章進行處理
+            // 使用 Jsoup 解析文章內容的 HTML
+            Document doc = Jsoup.parse(article.getContent());
+
+            // 提取前20個字作為摘要
+            String text = doc.body().text();
+            String excerpt = text.length() > 30 ? text.substring(0, 30) : text; // 取得前20個字
+            article.setContent(excerpt);
+
+            // 提取第一張圖片的 URL
+            Element img = doc.select("img").first(); // 選擇第一個 <img> 標籤
+            String imageUrl = img != null ? img.attr("src") : "";
+            article.setFirstImgUrl(imageUrl);
+
+            // 將文章的 articleId 加入到熱門文章的 Set 中
+            redisTemplate.opsForSet().add("latestArticleIds", article.getArticleId());
+        });
+
+        //存入緩存
+        redisTemplate.opsForValue().set(LATEST_ARTICLES_KEY, articles, 30, TimeUnit.MINUTES);
+
+        return articles;
+    }
+
     //編輯文章
     @PostMapping("/edit")
     public String editArticle(@RequestBody Article article){
         try {
+            // 淨化文章內容，防止 XSS 攻擊
+            String sanitizedContent = sanitizeHtml(article.getContent());
+            article.setContent(sanitizedContent);
+
             userMapper.updateArticle(article);
+
+            // 刪除該文章的緩存
+            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + article.getArticleId();
+            redisTemplate.delete(redisKey);
+
+            // 檢查該文章是否在熱門或最新文章集合中
+            int articleId = article.getArticleId();
+            boolean isHotArticle = redisTemplate.opsForSet().isMember("hotArticleIds", articleId);
+            boolean isLatestArticle = redisTemplate.opsForSet().isMember("latestArticleIds", articleId);
+
+            // 如果文章是熱門文章或最新文章
+            if (isHotArticle || isLatestArticle) {
+                refreshCache(articleId);
+            }
+
             return "edit article success";
         } catch (Exception e) {
             e.printStackTrace();
             return "edit article fail";
         }
+    }
+
+    // 刷新緩存
+    private void refreshCache(int articleId) {
+        refreshHotArticle();  // 刷新熱門文緩存
+        refreshLatestArticle(); // 刷新最新文章緩存
+
+        // 刷新該文章的緩存
+        String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;    // 根據 articleId 動態生成 Redis 鍵
+        ArticleDTO specificArticle = userMapper.selectArticleById(articleId);
+        redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
     }
 
     //刪除文章
@@ -251,10 +315,11 @@ public class ArticleController {
     @GetMapping("/getArticleById/{articleId}")
     public ResponseEntity<?> getArticleById(@PathVariable int articleId) {
         try {
+
             // 根據 articleId 動態生成 Redis 鍵
             String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
 
-            // 從 Redis 查詢熱門文章緩存
+            //  從 Redis 查詢熱門文章緩存
             Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
             ArticleDTO specificArticle = null;
 

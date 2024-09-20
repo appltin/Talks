@@ -31,11 +31,14 @@ public class UploadController {
             String originalFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
             String cleanedFilename = originalFilename.replaceAll("[^a-zA-Z0-9.-]", "_"); // 清理文件名中的特殊字符
             String key = UUID.randomUUID() + "-" + cleanedFilename;
+            // 確定文件的 Content-Type
+            String contentType = file.getContentType(); // 從上傳的文件獲取 MIME 類型
 
             // 創建 S3 上傳請求
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)  // 設定要上傳的存儲桶
                     .key(key)            // 設定文件在存儲桶中的 key
+                    .contentType(contentType) // 設定文件的 Content-Type
                     .build();
 
             // 將文件上傳到 S3
