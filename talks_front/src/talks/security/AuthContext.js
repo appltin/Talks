@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import { formApiClient } from "../api/formApiClient";
 import axios from 'axios'
 import { getAvatarAndUerId, getUserInformation } from '../api/TalksApiService'
 
@@ -7,16 +6,18 @@ import { getAvatarAndUerId, getUserInformation } from '../api/TalksApiService'
 export const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
 
-export const executeAuthenticationService = (username, password) => 
-    axios.post('http://localhost:8080/login', {
-        username,
-        password
-    }, {
+export const executeAuthenticationService = async(username, password) => {
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
+
+    return axios.post('http://localhost:8080/login', params, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Cache-Control': 'no-cache',
         },
     });
+}
 
 
 //2: Share the created context with other components
@@ -30,12 +31,10 @@ export default function AuthProvider({ children }) {
     const [starredItems, setStarredItems] = useState({}); 
 
     // 設置 Axios 攔截器
-    function setAuthInterceptor(username, password) {
-        const token = btoa(`${username}:${password}`);
-        console.log(token)
+    function setAuthInterceptor(token) {
         axios.interceptors.request.use(
             config => {
-                config.headers['Authorization'] = `Basic ${token}`;
+                config.headers['Authorization'] = `Bearer ${token}`;
                 return config;
             },
             error => {
@@ -47,9 +46,11 @@ export default function AuthProvider({ children }) {
     async function login(username, password) {
         try {
             const response = await executeAuthenticationService(username, password);
+            console.log(response)
             
             if (response.status === 200) {
-                setAuthInterceptor(username, password);
+                const token = response.data.token
+                setAuthInterceptor(token);
                 setAuthenticated(true);
 
                 // 取得用戶頭像和id
