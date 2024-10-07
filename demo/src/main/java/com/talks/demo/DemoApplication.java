@@ -17,37 +17,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan("com.talks.demo.articleDao.dao")
 public class DemoApplication {
 
-	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
-
-	public void testRedisConnection() {
-		// 設置一個鍵
-		redisTemplate.opsForValue().set("testKey", "Hello Redis!");
-
-		// 讀取該鍵的值
-		String value = redisTemplate.opsForValue().get("testKey");
-
-		System.out.println("從 Redis 讀取的值: " + value);
-	}
-
 	public static void main(String[] args) {
-		// 啟動 Spring 應用
-		ConfigurableApplicationContext context = SpringApplication.run(DemoApplication.class, args);
-
-		// 從 Spring 容器中獲取 DemoApplication 實例
-		DemoApplication app = context.getBean(DemoApplication.class);
-		// 測試 Redis 連接
-		app.testRedisConnection();
+		SpringApplication.run(DemoApplication.class, args);
 	}
+
 }
-//@SpringBootApplication
-//@EnableTransactionManagement
-//@MapperScan("com.talks.demo.articleDao.dao")
-//public class DemoApplication {
-//
-//	public static void main(String[] args) {
-//
-//		SpringApplication.run(DemoApplication.class, args);
-//	}
-//
-//}

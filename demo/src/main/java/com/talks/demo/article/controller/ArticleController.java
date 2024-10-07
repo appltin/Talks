@@ -55,7 +55,7 @@ public class ArticleController {
     }
 
 
-    // 獲取 Redis key 對應 value 的 API
+    // 測試redis
     @GetMapping("/redis/get")
     public Object getRedisValue(@RequestParam String key) {
         Object value = redisTemplate.opsForValue().get(key);
@@ -171,13 +171,13 @@ public class ArticleController {
     @GetMapping("/latest")
     public  ResponseEntity<?> getNewArticle(){
         try {
-//            // 先從 Redis 查詢熱門文章緩存
-//            List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
-//
-//            if(latestArticle == null){
-//                latestArticle = refreshLatestArticle();
-//            }
-            List<ArticleDTO> latestArticle = refreshLatestArticle();
+            // 先從 Redis 查詢熱門文章緩存
+            List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
+
+            if(latestArticle == null){
+                latestArticle = refreshLatestArticle();
+            }
+
             return ResponseEntity.ok(latestArticle);
         } catch (Exception e) {
             e.printStackTrace();
@@ -339,23 +339,21 @@ public class ArticleController {
     public ResponseEntity<?> getArticleById(@PathVariable int articleId) {
         try {
 
-//            // 根據 articleId 動態生成 Redis 鍵
-//            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
-//
-//            //  從 Redis 查詢熱門文章緩存
-//            Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
-//            ArticleDTO specificArticle = null;
-//
-//            if (cachedArticle != null) {
-//                // 使用 ObjectMapper 將 LinkedHashMap 轉換為 ArticleDTO
-//                specificArticle = objectMapper.convertValue(cachedArticle, ArticleDTO.class);
-//            } else {
-//                specificArticle = userMapper.selectArticleById(articleId);
-//                // 將結果存入 Redis 並設置過期時間
-//                redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
-//            }
+            // 根據 articleId 動態生成 Redis 鍵
+            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
 
-            ArticleDTO specificArticle = userMapper.selectArticleById(articleId);
+            //  從 Redis 查詢熱門文章緩存
+            Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
+            ArticleDTO specificArticle = null;
+
+            if (cachedArticle != null) {
+                // 使用 ObjectMapper 將 LinkedHashMap 轉換為 ArticleDTO
+                specificArticle = objectMapper.convertValue(cachedArticle, ArticleDTO.class);
+            } else {
+                specificArticle = userMapper.selectArticleById(articleId);
+                // 將結果存入 Redis 並設置過期時間
+                redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
+            }
 
             return ResponseEntity.ok(specificArticle);
 
@@ -372,6 +370,10 @@ public class ArticleController {
         try {
             int result = userMapper.incrementArticleLove(articleId);
 
+            // 刪除Redis中的緩存
+            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
+            redisTemplate.delete(redisKey);
+
             if (result > 0) {
                 return ResponseEntity.ok("Article love count incremented successfully.");
             } else {
@@ -387,6 +389,10 @@ public class ArticleController {
     public ResponseEntity<?> decrementArticleLove(@PathVariable int articleId) {
         try {
             int result = userMapper.decrementArticleLove(articleId);
+
+            // 刪除Redis中的緩存
+            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
+            redisTemplate.delete(redisKey);
 
             if (result > 0) {
                 return ResponseEntity.ok("Article love count decremented successfully.");
