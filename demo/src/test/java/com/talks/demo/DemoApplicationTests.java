@@ -1,23 +1,30 @@
 package com.talks.demo;
 
-import com.talks.demo.articleDao.dao.UserMapper;
-import com.talks.demo.articleDao.pojo.User;
-import com.talks.demo.articleDao.utils.MybatisUtils;
-import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.context.TestPropertySource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class DemoApplicationTests {
-
-	@Autowired
-	private UserMapper userMapper;
-
-	@Test
-	void contextLoads() {
-		User user = userMapper.getAvatarType("admin");
-		System.out.println(user);
-	}
-
+//@TestPropertySource(properties = {
+//        "spring.redis.url=redis://redis:6379"
+//})
+public class DemoApplicationTests {
+//    @Autowired
+//    private RedisTemplate<String, Object> redisTemplate;
+//
+//    @Test
+//    void testAddDataToRedis() {
+//        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+//        String key = "user:1001";
+//        String value = "TestUser";
+//        valueOperations.set(key, value);
+//
+//        Object storedValue = valueOperations.get(key);
+//        assertThat(storedValue).isEqualTo(value);
+//    }
 }

@@ -9,6 +9,8 @@ import org.jsoup.safety.Safelist;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Jsoup;
@@ -44,6 +47,24 @@ public class ArticleController {
 
     @Autowired
     private ObjectMapper objectMapper;  // 注入 ObjectMapper
+
+
+    @GetMapping("/test")
+    public String tryApi() {
+        return "test!!";
+    }
+
+
+    // 獲取 Redis key 對應 value 的 API
+    @GetMapping("/redis/get")
+    public Object getRedisValue(@RequestParam String key) {
+        Object value = redisTemplate.opsForValue().get(key);
+        if (value != null) {
+            return "Key 的值為: " + value.toString();
+        } else {
+            return "Key 不存在";
+        }
+    }
 
     //取得頭像和userId
     @GetMapping("/getUerInformation")
@@ -148,19 +169,20 @@ public class ArticleController {
 
     //獲取最新文
     @GetMapping("/latest")
-    public List<ArticleDTO> getNewArticle(){
+    public  ResponseEntity<?> getNewArticle(){
         try {
-            // 先從 Redis 查詢熱門文章緩存
-            List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
-
-            if(latestArticle == null){
-                latestArticle = refreshLatestArticle();
-            }
-
-            return latestArticle;
+//            // 先從 Redis 查詢熱門文章緩存
+//            List<ArticleDTO> latestArticle =  (List<ArticleDTO>) redisTemplate.opsForValue().get(LATEST_ARTICLES_KEY);
+//
+//            if(latestArticle == null){
+//                latestArticle = refreshLatestArticle();
+//            }
+            List<ArticleDTO> latestArticle = refreshLatestArticle();
+            return ResponseEntity.ok(latestArticle);
         } catch (Exception e) {
             e.printStackTrace();
-            return Collections.emptyList();  // 返回空列表
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while get latestArticles");
         }
     }
 
@@ -287,6 +309,7 @@ public class ArticleController {
 
         try{
             List<ArticleDTO> SpecifyBoardArticles = userMapper.selectSpecifyBoard(boardName);
+            System.out.println(SpecifyBoardArticles);
 
             SpecifyBoardArticles.forEach(article -> {
                 // 對每一篇文章進行處理
@@ -316,21 +339,23 @@ public class ArticleController {
     public ResponseEntity<?> getArticleById(@PathVariable int articleId) {
         try {
 
-            // 根據 articleId 動態生成 Redis 鍵
-            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
+//            // 根據 articleId 動態生成 Redis 鍵
+//            String redisKey = SPECIFIC_ARTICLE_KEY + "_" + articleId;
+//
+//            //  從 Redis 查詢熱門文章緩存
+//            Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
+//            ArticleDTO specificArticle = null;
+//
+//            if (cachedArticle != null) {
+//                // 使用 ObjectMapper 將 LinkedHashMap 轉換為 ArticleDTO
+//                specificArticle = objectMapper.convertValue(cachedArticle, ArticleDTO.class);
+//            } else {
+//                specificArticle = userMapper.selectArticleById(articleId);
+//                // 將結果存入 Redis 並設置過期時間
+//                redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
+//            }
 
-            //  從 Redis 查詢熱門文章緩存
-            Object cachedArticle = redisTemplate.opsForValue().get(redisKey);
-            ArticleDTO specificArticle = null;
-
-            if (cachedArticle != null) {
-                // 使用 ObjectMapper 將 LinkedHashMap 轉換為 ArticleDTO
-                specificArticle = objectMapper.convertValue(cachedArticle, ArticleDTO.class);
-            } else {
-                specificArticle = userMapper.selectArticleById(articleId);
-                // 將結果存入 Redis 並設置過期時間
-                redisTemplate.opsForValue().set(redisKey, specificArticle, 30, TimeUnit.MINUTES);
-            }
+            ArticleDTO specificArticle = userMapper.selectArticleById(articleId);
 
             return ResponseEntity.ok(specificArticle);
 
@@ -401,6 +426,7 @@ public class ArticleController {
 
             return ResponseEntity.ok(allBoards);
         } catch (Exception e) {
+            logger.error("Failed to get all boards",e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get all boards");
         }
     }

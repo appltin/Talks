@@ -39,7 +39,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // 禁用 CSRF
                 .authorizeRequests(authz -> authz
-                        .requestMatchers("/login", "/register").permitAll() // 允許訪問登入和註冊
+                        .requestMatchers("/login", "/register", "/error").permitAll() // 允許訪問登入和註冊
                         .anyRequest().authenticated() // 其他請求都需要驗證
                 )
                 .formLogin(form -> form
@@ -59,8 +59,10 @@ public class SecurityConfig {
                         .permitAll() // 允許訪問登入頁面
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 使用無狀態的 session 策略
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // 在用戶名密碼驗證過濾器前添加 JWT 過濾器
+                        // 使用無狀態的 session 策略
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 添加 JWT 過濾器
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

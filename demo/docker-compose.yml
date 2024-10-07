@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    image: demo-app # 構建後的應用映像名
+    build:
+      context: . # 設置為當前目錄，也就是專案的根目錄
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - my-redis
+    environment:
+      - JWT_SECRET=ZpamwRHttdCMHElNBJueQLbag250DcT6wsUyrZt01qg=  # 傳遞 Base64 編碼後的密鑰
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/talks
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_DATA_REDIS_HOST=my-redis
+      - SPRING_DATA_REDIS_PORT=6379
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: talks
+    ports:
+      - "3307:3306" # 將容器的 3306 端口映射到主機的 3307 端口
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  my-redis:
+    container_name: my-redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server", "--appendonly", "yes" ]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true  # 使用手動創建的 app-network
+
+volumes:
+  mysql_data:
+  redis_data:

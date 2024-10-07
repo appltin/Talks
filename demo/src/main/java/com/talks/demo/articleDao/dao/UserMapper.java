@@ -93,7 +93,7 @@ public interface UserMapper {
     List<ArticleDTO> getFavBoardArticles(List<Integer> boardIds);
 
     // 查詢單一看板
-    @Select("SELECT * FROM article WHERE board = #{boardName} ORDER BY love DESC LIMIT 40")
+    @Select("SELECT a.*, u.username FROM article a left join user u on a.user_id = u.id where a.board=#{boardName} ORDER BY love DESC LIMIT 40;")
     List<ArticleDTO> selectSpecifyBoard(@Param("boardName") String boardName);
 
     // 用id查詢文章
