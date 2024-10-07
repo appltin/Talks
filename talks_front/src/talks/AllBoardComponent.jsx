@@ -13,6 +13,7 @@ export default function AllBoardComponent() {
     const [board, setBoard] = useState([])
     const starredItems = authContext.starredItems
     const setStarredItems = authContext.setStarredItems
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchBoards()
@@ -84,7 +85,7 @@ export default function AllBoardComponent() {
                                     alt='' 
                                     className='updatePage_img rounded-circle'
                                 />
-                                <p className='ms-4 mb-0 fs-4 fw-bold'>{board.boardName}</p>
+                                <p className='ms-4 mb-0 fs-4 fw-bold' onClick={() => navigate(`/page/${board.boardName}`)}>{board.boardName}</p>
                                 <p className='ms-5 mx-1 mb-0'>-</p>
                                 <p className='mb-0'>{board.slogan}</p>
 

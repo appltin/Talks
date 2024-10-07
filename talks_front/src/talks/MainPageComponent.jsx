@@ -56,6 +56,7 @@ export default function MainPageCompetent() {
 
         const fetchArticles = async () => {
             try {
+
                 let data;
                 if (condition === 'popular') {
                     data = await getPopularArticle();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa'; // 使用 react-icons 作為星星圖示
 import { useAuth } from './security/AuthContext';
 import {useParams, useNavigate} from 'react-router-dom'
-import { getSpecifyBoardArticle, getPopularArticle, getLatestArticle, getFavBoardArticles, getFavoriteBoardId} from './api/TalksApiService';
+import { getSpecifyBoardArticle, getPopularArticle, getLatestArticle, getFavBoardArticles, getFavoriteBoardId, getArticleById, } from './api/TalksApiService';
 import './css/MainPage.css'
 import { Dropdown } from 'react-bootstrap';
 import {Link} from 'react-router-dom'
@@ -12,6 +12,7 @@ import Sidebar from './SidebarComponent';
 import adImage from '../images/ads.png';
 import adImage2 from '../images/ads2.jpg';
 import AdvertiseComponent from './AdvertiseComponent'
+import { Modal, Button, Form } from 'react-bootstrap'; // 引入模態視窗必要組件
 
 
 export default function PageCompotent() {
@@ -20,6 +21,8 @@ export default function PageCompotent() {
     const authContext = useAuth();
     const userId = authContext.userId
     const [specifyBoardArticle, setSpecifyBoardArticle] = useState([])
+    const [selectedArticle, setSelectedArticle] = useState(null)
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
         SpecifyBoardArticle()
@@ -29,12 +32,17 @@ export default function PageCompotent() {
     const SpecifyBoardArticle = async() => {
         try{
             let data = await getSpecifyBoardArticle(boardName)
+            console.log(data)
             setSpecifyBoardArticle(data)
         }catch(error){
             console.error('fail to fetch favBoardArticles')
             throw error
         }
     }
+
+
+
+
     
 
     return (
@@ -95,6 +103,8 @@ export default function PageCompotent() {
                                         </div>}
                                     </div>
                                 ))}
+
+                                
                             </div>
                         </div>
                     </div>
