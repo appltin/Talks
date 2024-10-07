@@ -50,7 +50,6 @@ export default function MainPageCompetent() {
     const handleClose = () => {
         setShowModal(false);
         setSelectedArticle(null);
-
     };
 
     useEffect(() => {
@@ -112,6 +111,7 @@ export default function MainPageCompetent() {
                 await incrementArticleLove(selectedArticle.articleId) 
                 //模態視窗
                 selectedArticle.love += 1 
+
                 //主頁兩個列表
                 updatedArticles.forEach((article) => { 
                     if(article.articleId === id){
@@ -128,6 +128,7 @@ export default function MainPageCompetent() {
             }else{
                 await decrementArticleLove(selectedArticle.articleId);      
                 selectedArticle.love -= 1      
+
                 updatedArticles.forEach((article) => {
                     if(article.articleId === id){
                         article.love -= 1
