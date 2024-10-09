@@ -86,8 +86,8 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // 明確允許 http://localhost:3000 來源
+        config.setAllowCredentials(false); // 設置為 false，這樣可以使用萬用符號
+        config.addAllowedOrigin("*"); // 明確允許前端請求來源
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

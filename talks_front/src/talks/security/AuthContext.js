@@ -11,7 +11,7 @@ export const executeAuthenticationService = async(username, password) => {
     params.append('username', username);
     params.append('password', password);
 
-    return axios.post('http://localhost:8080/login', params, {
+    return axios.post('http://54.226.15.26:8080/login', params, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Cache-Control': 'no-cache',
