@@ -40,40 +40,48 @@
 
 
 
-![Screenshot from 2024-10-10 16-55-08.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/c8954461-127e-4d1e-a7ce-b78c7a8d2e96/addc9681-f565-4c8d-a30c-14aa34382230.png)
+![Screenshot from 2024-10-10 16-55-08](https://github.com/user-attachments/assets/6ffdbaf0-1430-4bac-bcab-485de07d3120)
+
 
 ## **功能介紹**
 
 
 
 註冊帳號
+![Screenshot from 2024-10-10 17-06-19](https://github.com/user-attachments/assets/c3516d06-b67f-43f5-85c6-610877143c83)
 
-![Screenshot from 2024-10-10 17-06-19.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/9bc0ff75-2f3c-48e3-aa66-11554042bf21/Screenshot_from_2024-10-10_17-06-19.png)
+
 
 篩選最新文章  or 熱門文章
 
-![Screenshot from 2024-10-10 16-58-20.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/6d34247c-7f58-4e6d-afa5-af1a5acc8bf6/e2b7c6c0-cf95-4d7f-8655-6b6802dfe379.png)
+![Screenshot from 2024-10-10 16-58-20](https://github.com/user-attachments/assets/ab6c1f35-bdfb-4f73-a847-b3af232a03f0)
+
 
 查看追蹤看板的文章
 
-![Screenshot from 2024-10-10 17-01-58.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/52acdd18-c998-46b7-af47-2e33e5e30f2c/Screenshot_from_2024-10-10_17-01-58.png)
+![Screenshot from 2024-10-10 17-01-58](https://github.com/user-attachments/assets/194fb5d1-80e1-44b7-b85a-d97088505dbb)
+
 
 閱讀文章與留言
 
-![Screenshot from 2024-10-10 17-03-23.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/782d99ec-234f-4a3d-81f1-a30c065f3a59/Screenshot_from_2024-10-10_17-03-23.png)
+![Screenshot from 2024-10-10 17-03-23](https://github.com/user-attachments/assets/e753ff0f-f759-4698-945b-734fa0a576ed)
 
-![Screenshot from 2024-10-10 17-10-12.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/623acdc3-80b4-46da-9f96-cac17d32a1d5/Screenshot_from_2024-10-10_17-10-12.png)
+![Screenshot from 2024-10-10 17-10-12](https://github.com/user-attachments/assets/a21f3f3e-8545-4891-990c-136635e04ced)
+
+
 
 查看所有的看板
 
-![Screenshot from 2024-10-10 17-07-20.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/8c8f5585-b334-4a8a-9cf9-aac98acb700a/Screenshot_from_2024-10-10_17-07-20.png)
+![Screenshot from 2024-10-10 17-07-20](https://github.com/user-attachments/assets/d0db628c-85c2-422b-965e-9e3af4d2ea19)
+
 
 上傳文章
 
-![Screenshot from 2024-10-10 17-32-14.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/8ab36223-f784-4021-8a55-88ca0003544d/Screenshot_from_2024-10-10_17-32-14.png)
+![Screenshot from 2024-10-10 17-32-14](https://github.com/user-attachments/assets/9777bebd-6ad9-468b-a9ec-ce76ee58eac6)
+
 
 編輯舊文
+![Screenshot from 2024-10-10 17-33-40](https://github.com/user-attachments/assets/5db53c9c-c0c5-4aec-8721-c646320f4791)
+![Screenshot from 2024-10-10 17-34-03](https://github.com/user-attachments/assets/2f11f911-9218-4784-9dd7-2caf1306aa43)
 
-![Screenshot from 2024-10-10 17-33-40.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/a90ee63a-bb12-4e3d-8c39-8280ff85b77a/Screenshot_from_2024-10-10_17-33-40.png)
 
-![Screenshot from 2024-10-10 17-34-03.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/67b12914-13c5-4244-9246-0130776a24c0/Screenshot_from_2024-10-10_17-34-03.png)
