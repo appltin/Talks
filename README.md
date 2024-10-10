@@ -33,10 +33,8 @@
 - **AWS EC2** ： 運行容器
 
 ## 系統架構圖
+![S3 (1)](https://github.com/user-attachments/assets/ec2cd918-5d73-4890-b9aa-89cd824f2070)
 
-
-
-![S3.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/314c1e6e-a839-42b3-b9ac-c7f09670266e/S3.jpg)
 
 ## **MySQL資料庫架構**
 
