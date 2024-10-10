@@ -10,7 +10,7 @@
 1. 帳號系統：個人帳號之新增與刪除 , 並可追蹤喜愛的看板
 2. 文章系統：使用者可以發佈文章並在文章下留言、按讚 , 並可以篩選最新、熱門文章還有追蹤看板的文章
 
----
+
 
 ## 使用技術
 
@@ -34,19 +34,19 @@
 
 ## 系統架構圖
 
----
+
 
 ![S3.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/314c1e6e-a839-42b3-b9ac-c7f09670266e/S3.jpg)
 
 ## **MySQL資料庫架構**
 
----
+
 
 ![Screenshot from 2024-10-10 16-55-08.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/32fb1fb1-a50c-42cb-9597-5faaf836bde8/c8954461-127e-4d1e-a7ce-b78c7a8d2e96/addc9681-f565-4c8d-a30c-14aa34382230.png)
 
 ## **功能介紹**
 
----
+
 
 註冊帳號
 
