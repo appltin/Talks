@@ -1,9 +1,5 @@
-## talks
-
-
 ## 網頁連結
 點擊專案網址
-
 [http://elasticbeanstalk-us-east-1-460820365574.s3-website-us-east-1.amazonaws.com](http://elasticbeanstalk-us-east-1-460820365574.s3-website-us-east-1.amazonaws.com/) 
 
 
