@@ -46,6 +46,8 @@
 
 
 註冊帳號
+![Screenshot from 2024-10-11 13-24-14](https://github.com/user-attachments/assets/e008a2fc-e31d-4a96-9c71-b58186cf4ee6)
+
 ![Screenshot from 2024-10-10 17-06-19](https://github.com/user-attachments/assets/c3516d06-b67f-43f5-85c6-610877143c83)
 
 
