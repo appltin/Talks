@@ -3,6 +3,7 @@
 [http://elasticbeanstalk-us-east-1-460820365574.s3-website-us-east-1.amazonaws.com](http://elasticbeanstalk-us-east-1-460820365574.s3-website-us-east-1.amazonaws.com/) 
 
 
+
 本專為參考Dcard的社群論壇與交友平台，主功能如下：
 
 1. 帳號系統：個人帳號之新增與刪除 , 並可追蹤喜愛的看板
